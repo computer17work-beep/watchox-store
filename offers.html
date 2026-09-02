@@ -1,203 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Offers | WATCHOX</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Offers & Combos | WATCHOX</title>
+  <meta name="description" content="Exclusive watch combo deals, promo coupons, and limited-time flash sales at WATCHOX." />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .coupon-card {
+      background: var(--bg-card);
+      border: 1px dashed var(--border-dark);
+      padding: 20px;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: var(--transition);
+    }
+    .coupon-card:hover {
+      border-color: var(--text-primary);
+    }
+    .coupon-code {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-dark);
+      padding: 6px 14px;
+      font-weight: bold;
+      letter-spacing: 2px;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
 <body>
-    <!-- TOP BAR -->
-    <div class="top-bar">
-        <div class="container">
-            <span><i class="fas fa-truck"></i> Free delivery on orders over ৳500</span>
-            <span><i class="fas fa-phone-alt"></i> Support: 01700-000000</span>
-            <span><i class="fas fa-tag"></i> Use WATCH10 for 10% off</span>
+
+  <!-- Header Rendered Dynamically -->
+  <header id="main-header"></header>
+
+  <section class="section">
+    <div class="container">
+      <h1 class="section-title">Offers & Savings Hub</h1>
+
+      <!-- Active Coupons Section -->
+      <div style="margin-bottom: 50px;">
+        <h2 style="font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 20px;">Active Store Coupons</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;" id="coupons-container">
+          <!-- Injected Dynamically -->
         </div>
+      </div>
+
+      <!-- Flash Sale Section -->
+      <div style="margin-bottom: 50px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+          <h2 style="font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1.5px;">Flash Sale Deals</h2>
+          <div style="font-size: 0.9rem; color: var(--text-secondary);">
+            Ending in: <span id="offers-flash-timer" data-countdown="2026-12-31T23:59:59" style="color: #fff; font-weight: bold;">00:00:00</span>
+          </div>
+        </div>
+        <div id="offers-flash-grid" class="product-grid"></div>
+      </div>
+
+      <!-- Combo Bundles Section -->
+      <div id="combos">
+        <h2 style="font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 20px;">Exclusive Combo Bundles</h2>
+        <div id="offers-combo-grid" class="product-grid"></div>
+      </div>
     </div>
+  </section>
 
-    <!-- NAVBAR -->
-    <nav class="navbar">
-        <div class="container nav-inner">
-            <div class="logo"><a href="index.html">WATCH<span>OX</span></a></div>
-            <div class="nav-links">
-                <a href="index.html">Home</a>
-                <a href="shop.html">Shop</a>
-                <a href="offers.html" class="active">Offers</a>
-                <a href="index.html#new-arrivals">New</a>
-                <a href="index.html#flash-sale">Flash Sale</a>
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      renderCoupons();
+      renderOfferGrids();
+    });
+
+    function renderCoupons() {
+      const container = document.getElementById("coupons-container");
+      container.innerHTML = Object.entries(COUPONS).map(([code, details]) => `
+        <div class="coupon-card">
+          <div>
+            <div class="coupon-code">${code}</div>
+            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 8px;">
+              ${details.type === 'percentage' ? `${details.value}% OFF` : details.type === 'fixed' ? `${WATCHOX_CONFIG.currency}${details.value} OFF` : 'Free Shipping'}
+              (Min spend: ${WATCHOX_CONFIG.currency}${details.minSpend})
             </div>
-            <div class="nav-icons">
-                <span class="search-icon" onclick="toggleSearch()"><i class="fas fa-search"></i></span>
-                <a href="wishlist.html" class="wishlist-icon"><i class="far fa-heart"></i><span class="badge-count" id="wishlistCount">0</span></a>
-                <a href="cart.html" class="cart-icon"><i class="fas fa-shopping-bag"></i><span class="badge-count" id="cartCount">0</span></a>
-                <a href="account.html"><i class="far fa-user"></i></a>
-                <span class="menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></span>
+          </div>
+          <button class="btn-secondary" style="width: auto; font-size: 0.75rem;" onclick="copyCoupon('${code}')">Copy Code</button>
+        </div>
+      `).join('');
+    }
+
+    function copyCoupon(code) {
+      navigator.clipboard.writeText(code);
+      AppEngine.showToast(`Coupon code '${code}' copied!`);
+    }
+
+    function renderOfferGrids() {
+      const flashItems = PRODUCTS.filter(p => p.isFlashSale);
+      const comboItems = PRODUCTS.filter(p => p.isCombo);
+
+      renderGrid("offers-flash-grid", flashItems);
+      renderGrid("offers-combo-grid", comboItems);
+    }
+
+    function renderGrid(containerId, items) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = items.map(p => `
+        <div class="product-card">
+          ${p.badge ? `<span class="card-badge">${p.badge}</span>` : ''}
+          <div class="card-img-wrap">
+            <a href="product.html?id=${p.id}">
+              <img src="${p.images[0]}" alt="${p.name}" loading="lazy" />
+            </a>
+          </div>
+          <div class="card-info">
+            <h3 class="card-title"><a href="product.html?id=${p.id}">${p.name}</a></h3>
+            <div class="card-price-row">
+              <span class="current-price">${WATCHOX_CONFIG.currency}${p.price}</span>
+              ${p.previousPrice ? `<span class="prev-price">${WATCHOX_CONFIG.currency}${p.previousPrice}</span>` : ''}
             </div>
+            <button class="btn-primary" onclick="handleAddToCart('${p.id}')">Add to Cart</button>
+          </div>
         </div>
-        <div class="mobile-menu" id="mobileMenu">
-            <a href="index.html">Home</a>
-            <a href="shop.html">Shop</a>
-            <a href="offers.html">Offers</a>
-            <a href="index.html#new-arrivals">New Arrivals</a>
-            <a href="index.html#flash-sale">Flash Sale</a>
-            <a href="wishlist.html">Wishlist</a>
-            <a href="account.html">Account</a>
-        </div>
-    </nav>
+      `).join('');
+    }
 
-    <!-- SEARCH OVERLAY -->
-    <div class="search-overlay" id="searchOverlay">
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search for watches, brands, categories..." oninput="liveSearch(this.value)">
-            <button onclick="closeSearch()"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="search-results" id="searchResults"></div>
-    </div>
-
-    <!-- OFFERS CONTENT -->
-    <section style="padding:30px 0 60px;">
-        <div class="container">
-            <h1 style="margin-bottom:8px;">Offers & Deals</h1>
-            <p style="color:var(--gray);margin-bottom:30px;">Exclusive discounts, flash sales, and combo deals</p>
-
-            <!-- Flash Deals -->
-            <h2 class="section-title">⚡ Flash Deals</h2>
-            <div class="products-grid" id="flashDealsGrid"></div>
-
-            <!-- Discounted Products -->
-            <h2 class="section-title" style="margin-top:40px;">Discounted Products</h2>
-            <div class="products-grid" id="discountedGrid"></div>
-
-            <!-- Combo Deals -->
-            <h2 class="section-title" style="margin-top:40px;">Combo Deals</h2>
-            <div class="products-grid" id="comboGrid"></div>
-
-            <!-- Coupon Offers -->
-            <h2 class="section-title" style="margin-top:40px;">Coupon Offers</h2>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;" id="couponGrid"></div>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-brand">
-                    <div class="logo">WATCH<span>OX</span></div>
-                    <p>Time, Redefined. Premium watches for every moment.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                        <a href="#"><i class="fab fa-whatsapp"></i></a>
-                    </div>
-                </div>
-                <div class="footer-links">
-                    <h4>Quick Links</h4>
-                    <a href="shop.html">Shop All</a>
-                    <a href="offers.html">Offers</a>
-                    <a href="index.html#new-arrivals">New Arrivals</a>
-                    <a href="index.html#flash-sale">Flash Sale</a>
-                </div>
-                <div class="footer-links">
-                    <h4>Support</h4>
-                    <a href="support.html">FAQ</a>
-                    <a href="support.html">Contact Us</a>
-                    <a href="track-order.html">Track Order</a>
-                    <a href="support.html">Returns</a>
-                </div>
-                <div class="footer-links">
-                    <h4>Contact</h4>
-                    <p><i class="fas fa-phone"></i> 01700-000000</p>
-                    <p><i class="fas fa-envelope"></i> support@watchox.com</p>
-                    <p><i class="fas fa-map-marker-alt"></i> Dhaka, Bangladesh</p>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>© 2026 WATCHOX. All rights reserved.</p>
-                <div class="payment-icons">
-                    <i class="fas fa-credit-card"></i>
-                    <i class="fas fa-mobile-alt"></i>
-                    <span>bKash</span>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- BOTTOM NAV -->
-    <nav class="bottom-nav">
-        <a href="index.html"><i class="fas fa-home"></i><span>Home</span></a>
-        <a href="shop.html"><i class="fas fa-store"></i><span>Shop</span></a>
-        <a href="wishlist.html"><i class="far fa-heart"></i><span>Wishlist</span></a>
-        <a href="cart.html"><i class="fas fa-shopping-bag"></i><span>Cart</span></a>
-        <a href="account.html"><i class="far fa-user"></i><span>Account</span></a>
-    </nav>
-
-    <div class="toast-container" id="toastContainer"></div>
-
-    <script src="js/data.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/cart.js"></script>
-    <script src="js/wishlist.js"></script>
-    <script src="js/app.js"></script>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Flash deals
-            const flashDeals = getFlashSaleProducts(6);
-            document.getElementById('flashDealsGrid').innerHTML = renderProductCards(flashDeals);
-            
-            // Discounted products
-            const discounted = PRODUCTS.filter(p => p.discount >= 15).slice(0, 6);
-            document.getElementById('discountedGrid').innerHTML = renderProductCards(discounted);
-            
-            // Combo deals
-            const comboGrid = document.getElementById('comboGrid');
-            comboGrid.innerHTML = COMBOS.map(combo => `
-                <div class="product-card">
-                    <div class="product-img" style="background-image:url('${combo.image}');height:180px;">
-                        <span class="product-badge">Combo</span>
-                    </div>
-                    <div class="product-name">${combo.name}</div>
-                    <div style="font-size:0.85rem;color:var(--gray);">${combo.description}</div>
-                    <div style="margin:8px 0;">
-                        <span class="product-price">${formatCurrency(combo.comboPrice)}</span>
-                        <span style="color:#27ae60;font-weight:600;margin-left:8px;">Save ${formatCurrency(combo.savings)}</span>
-                    </div>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                        ${combo.products.map(id => {
-                            const p = getProductById(id);
-                            return p ? `<span style="background:var(--offwhite);padding:2px 10px;border-radius:30px;font-size:0.7rem;">${p.name}</span>` : '';
-                        }).join('')}
-                    </div>
-                    <button class="btn-add-cart" onclick="showToast('Combo added to cart!','success')" style="margin-top:12px;padding:8px 16px;border-radius:30px;background:var(--black);color:#fff;width:100%;">
-                        Add Combo to Cart
-                    </button>
-                </div>
-            `).join('');
-
-            // Coupons
-            const couponGrid = document.getElementById('couponGrid');
-            couponGrid.innerHTML = COUPONS.map(c => `
-                <div style="background:var(--offwhite);border-radius:12px;padding:20px;text-align:center;border:2px dashed var(--black);">
-                    <div style="font-size:1.4rem;font-weight:700;letter-spacing:2px;">${c.code}</div>
-                    <div style="margin:8px 0;font-size:0.9rem;">
-                        ${c.type === 'percentage' ? `${c.value}% OFF` : c.type === 'fixed' ? `৳${c.value} OFF` : 'Free Shipping'}
-                    </div>
-                    <div style="font-size:0.75rem;color:var(--gray);">Min Order: ৳${c.minOrder}</div>
-                    <button onclick="navigator.clipboard.writeText('${c.code}').then(()=>showToast('Coupon copied!','success'))" 
-                        style="margin-top:12px;padding:6px 16px;border:1px solid var(--border);border-radius:30px;font-size:0.8rem;">
-                        Copy Code
-                    </button>
-                </div>
-            `).join('');
-
-            updateCartBadge();
-            updateWishlistBadge();
-        });
-    </script>
+    function handleAddToCart(id) {
+      if (StoreEngine.addToCart(id)) {
+        AppEngine.showToast("Product added to cart!");
+      }
+    }
+  </script>
 </body>
 </html>
