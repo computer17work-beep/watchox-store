@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="page-title">WATCHOX | Premium Timepiece</title>
+  <meta id="page-desc" name="description" content="Discover luxury watches and tactical smartwatches at WATCHOX." />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .product-details-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    @media (min-width: 992px) {
+      .product-details-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    .gallery-main {
+      width: 100%;
+      height: 400px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .gallery-main img {
+      max-height: 100%;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+    .gallery-main img:hover {
+      transform: scale(1.15);
+    }
+    .gallery-thumbs {
+      display: flex;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .thumb-btn {
+      width: 70px;
+      height: 70px;
+      border: 1px solid var(--border-dark);
+      background: var(--bg-card);
+      cursor: pointer;
+    }
+    .thumb-btn.active {
+      border-color: var(--text-primary);
+    }
+    .variant-selector {
+      display: flex;
+      gap: 10px;
+      margin: 12px 0 20px 0;
+    }
+    .variant-btn {
+      padding: 8px 16px;
+      border: 1px solid var(--border-dark);
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .variant-btn.active {
+      border-color: var(--text-primary);
+      color: var(--text-primary);
+      background: var(--bg-card);
+    }
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+    .spec-table td {
+      padding: 10px;
+      border-bottom: 1px solid var(--border-dark);
+      font-size: 0.85rem;
+    }
+    .spec-table td:first-child {
+      color: var(--text-secondary);
+      width: 40%;
+    }
+    .sticky-mobile-bar {
+      position: fixed;
+      bottom: 60px;
+      left: 0;
+      width: 100%;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-dark);
+      padding: 10px 16px;
+      display: flex;
+      gap: 10px;
+      z-index: 999;
+    }
+    @media (min-width: 992px) {
+      .sticky-mobile-bar { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header id="main-header"></header>
+
+  <section class="section">
+    <div class="container">
+      <div id="product-content-wrapper" class="product-details-grid">
+        </div>
+    </div>
+  </section>
+
+  <div id="mobile-action-bar" class="sticky-mobile-bar"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    let currentProduct = null;
+    let selectedVariant = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const productId = params.get("id");
+
+      currentProduct = PRODUCTS.find(p => p.id === productId) || PRODUCTS[0];
+      selectedVariant = currentProduct.variants ? currentProduct.variants[0] : null;
+
+      // Track recently viewed
+      StoreEngine.trackRecentlyViewed(currentProduct.id);
+
+      // Dynamic SEO Meta Updates
+      document.getElementById("page-title").textContent = `${currentProduct.name} | ${WATCHOX_CONFIG.storeName}`;
+      document.getElementById("page-desc").setAttribute("content", currentProduct.description);
+
+      renderProductDetails();
+    });
+
+    function renderProductDetails() {
+      const wrapper = document.getElementById("product-content-wrapper");
+      const isWish = StoreEngine.isInWishlist(currentProduct.id);
+
+      wrapper.innerHTML = `
+        <div>
+          <div class="gallery-main">
+            <img id="main-gallery-img" src="${currentProduct.images[0]}" alt="${currentProduct.name}" />
+          </div>
+          <div class="gallery-thumbs">
+            ${currentProduct.images.map((img, idx) => `
+              <button class="thumb-btn ${idx === 0 ? 'active' : ''}" onclick="switchImage('${img}', this)">
+                <img src="${img}" style="width:100%; height:100%; object-fit:cover;" />
+              </button>
+            `).join('')}
+          </div>
+
+          ${currentProduct.videoUrl ? `
+            <div style="margin-top: 24px;">
+              <h3 class="filter-title">Product Showcase Video</h3>
+              <iframe width="100%" height="250" src="${currentProduct.videoUrl}" frameborder="0" allowfullscreen style="border:1px solid var(--border-dark);"></iframe>
+            </div>
+          ` : ''}
+        </div>
+
+        <div>
+          <div style="font-size: 0.8rem; color: var(--text-secondary); letter-spacing: 1.5px; text-transform: uppercase;">
+            ${currentProduct.brand} | SKU: ${currentProduct.sku}
+          </div>
+          <h1 style="font-size: 1.8rem; font-weight: 800; margin: 8px 0 12px 0;">${currentProduct.name}</h1>
+          
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+            <span style="color: #fff; font-weight: bold;">★ ${currentProduct.rating}</span>
+            <span style="color: var(--text-secondary); font-size: 0.85rem;">(${currentProduct.reviewsCount} customer reviews)</span>
+            <span style="color: ${currentProduct.stock > 0 ? '#4CAF50' : '#F44336'}; font-size: 0.85rem;">
+              ${currentProduct.stock > 0 ? `In Stock (${currentProduct.stock} left)` : 'Out of Stock'}
+            </span>
+          </div>
+
+          <div class="card-price-row" style="margin-bottom: 20px;">
+            <span class="current-price" style="font-size: 1.8rem;">${WATCHOX_CONFIG.currency}${currentProduct.price}</span>
+            ${currentProduct.previousPrice ? `<span class="prev-price" style="font-size: 1.2rem;">${WATCHOX_CONFIG.currency}${currentProduct.previousPrice}</span>` : ''}
+          </div>
+
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 24px;">${currentProduct.description}</p>
+
+          ${currentProduct.variants ? `
+            <div>
+              <label style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-secondary);">Select Edition / Color:</label>
+              <div class="variant-selector">
+                ${currentProduct.variants.map((v, idx) => `
+                  <button class="variant-btn ${idx === 0 ? 'active' : ''}" onclick="selectVariant('${v}', this)">${v}</button>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+
+          <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+            <span style="font-size: 0.85rem; text-transform: uppercase; color: var(--text-secondary);">Quantity:</span>
+            <div style="display: flex; border: 1px solid var(--border-dark);">
+              <button onclick="adjustQty(-1)" style="padding: 8px 16px; color: #fff;">-</button>
+              <input type="number" id="buy-qty" value="1" min="1" readonly style="width: 50px; text-align: center; background: transparent; border: none; color: #fff;" />
+              <button onclick="adjustQty(1)" style="padding: 8px 16px; color: #fff;">+</button>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 12px; margin-bottom: 24px;">
+            <button class="btn-primary" onclick="addToCartAction()" style="flex: 1;">Add To Cart</button>
+            <button class="btn-secondary" onclick="buyNowAction()" style="flex: 1;">Buy Now</button>
+            <button class="btn-secondary" onclick="toggleWishlistAction(this)" style="width: auto;">
+              ${isWish ? '♥' : '♡'}
+            </button>
+          </div>
+
+          <button onclick="copyProductLink()" class="btn-secondary" style="width: 100%; font-size: 0.75rem; padding: 8px;">🔗 Copy Product Link</button>
+
+          <div style="margin-top: 32px;">
+            <h3 style="font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border-dark); padding-bottom: 8px;">Specifications</h3>
+            <table class="spec-table">
+              ${Object.entries(currentProduct.specs || {}).map(([key, val]) => `
+                <tr><td>${key}</td><td>${val}</td></tr>
+              `).join('')}
+            </table>
+          </div>
+        </div>
+      `;
+
+      // Mobile action bar setup
+      document.getElementById("mobile-action-bar").innerHTML = `
+        <button class="btn-secondary" onclick="addToCartAction()" style="flex:1;">Add To Cart</button>
+        <button class="btn-primary" onclick="buyNowAction()" style="flex:1;">Buy Now</button>
+      `;
+    }
+
+    function switchImage(src, btn) {
+      document.getElementById("main-gallery-img").src = src;
+      document.querySelectorAll(".thumb-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    }
+
+    function selectVariant(v, btn) {
+      selectedVariant = v;
+      document.querySelectorAll(".variant-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    }
+
+    function adjustQty(delta) {
+      const input = document.getElementById("buy-qty");
+      let val = parseInt(input.value) + delta;
+      if (val < 1) val = 1;
+      input.value = val;
+    }
+
+    function addToCartAction() {
+      const qty = parseInt(document.getElementById("buy-qty").value);
+      StoreEngine.addToCart(currentProduct.id, selectedVariant, qty);
+      AppEngine.showToast("Product added to cart!");
+    }
+
+    function buyNowAction() {
+      addToCartAction();
+      window.location.href = "checkout.html";
+    }
+
+    function toggleWishlistAction(btn) {
+      const added = StoreEngine.toggleWishlist(currentProduct.id);
+      btn.textContent = added ? '♥' : '♡';
+      AppEngine.showToast(added ? "Added to Wishlist" : "Removed from Wishlist");
+    }
+
+    function copyProductLink() {
+      navigator.clipboard.writeText(window.location.href);
+      AppEngine.showToast("Product link copied to clipboard!");
+    }
+  </script>
+</body>
+</html>
