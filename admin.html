@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Admin Dashboard | WATCHOX</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .admin-page {
+            padding: 20px 0 60px;
+        }
+        .admin-sidebar {
+            background: var(--black);
+            color: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+        .admin-sidebar .logo {
+            color: #fff;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+        .admin-sidebar .logo span {
+            color: var(--gray);
+        }
+        .admin-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            transition: var(--transition);
+            cursor: pointer;
+            margin: 4px 0;
+            color: #aaa;
+        }
+        .admin-nav-item:hover,
+        .admin-nav-item.active {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        .admin-nav-item i {
+            width: 20px;
+        }
+        .admin-content {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--lightgray);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: var(--offwhite);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        .stat-card .label {
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .admin-table th,
+        .admin-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--lightgray);
+        }
+        .admin-table th {
+            background: var(--offwhite);
+            font-weight: 600;
+        }
+        .admin-table tr:hover td {
+            background: #fafafa;
+        }
+        .status-badge {
+            padding: 2px 12px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-badge.completed { background: #d4edda; color: #155724; }
+        .status-badge.pending { background: #fff3cd; color: #856404; }
+        .status-badge.processing { background: #cce5ff; color: #004085; }
+        .status-badge.cancelled { background: #f8d7da; color: #721c24; }
+        .admin-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .admin-actions button {
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        .admin-actions button:hover {
+            background: var(--offwhite);
+        }
+        @media (max-width: 768px) {
+            .admin-layout {
+                grid-template-columns: 1fr !important;
+            }
+            .admin-sidebar {
+                position: static;
+                display: flex;
+                overflow-x: auto;
+                gap: 8px;
+                padding: 12px;
+            }
+            .admin-sidebar .logo {
+                display: none;
+            }
+            .admin-nav-item {
+                white-space: nowrap;
+                padding: 8px 16px;
+                font-size: 0.85rem;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .admin-table {
+                font-size: 0.75rem;
+            }
+            .admin-table th,
+            .admin-table td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="container">
+            <span><i class="fas fa-truck"></i> Free delivery on orders over ৳500</span>
+            <span><i class="fas fa-phone-alt"></i> Support: 01700-000000</span>
+            <span><i class="fas fa-tag"></i> Use WATCH10 for 10% off</span>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="container nav-inner">
+            <div class="logo"><a href="index.html">WATCH<span>OX</span></a></div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="shop.html">Shop</a>
+                <a href="offers.html">Offers</a>
+                <a href="index.html#new-arrivals">New</a>
+                <a href="index.html#flash-sale">Flash Sale</a>
+            </div>
+            <div class="nav-icons">
+                <a href="wishlist.html" class="wishlist-icon"><i class="far fa-heart"></i><span class="badge-count" id="wishlistCount">0</span></a>
+                <a href="cart.html" class="cart-icon"><i class="fas fa-shopping-bag"></i><span class="badge-count" id="cartCount">0</span></a>
+                <a href="account.html"><i class="far fa-user"></i></a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ADMIN CONTENT -->
+    <section class="admin-page">
+        <div class="container">
+            <h1 style="margin-bottom:8px;">Admin Dashboard</h1>
+            <p style="color:var(--gray);margin-bottom:30px;">Manage your store</p>
+
+            <div class="admin-layout" style="display:grid;grid-template-columns:240px 1fr;gap:30px;">
+                <!-- Sidebar -->
+                <div class="admin-sidebar">
+                    <div class="logo">WATCH<span>OX</span></div>
+                    <div class="admin-nav-item active" data-section="dashboard"><i class="fas fa-chart-pie"></i> Dashboard</div>
+                    <div class="admin-nav-item" data-section="products"><i class="fas fa-box"></i> Products</div>
+                    <div class="admin-nav-item" data-section="categories"><i class="fas fa-tags"></i> Categories</div>
+                    <div class="admin-nav-item" data-section="orders"><i class="fas fa-shopping-bag"></i> Orders</div>
+                    <div class="admin-nav-item" data-section="customers"><i class="fas fa-users"></i> Customers</div>
+                    <div class="admin-nav-item" data-section="coupons"><i class="fas fa-ticket"></i> Coupons</div>
+                    <div class="admin-nav-item" data-section="offers"><i class="fas fa-percent"></i> Offers</div>
+                    <div class="admin-nav-item" data-section="flash-sales"><i class="fas fa-bolt"></i> Flash Sales</div>
+                    <div class="admin-nav-item" data-section="combos"><i class="fas fa-layer-group"></i> Combos</div>
+                    <div class="admin-nav-item" data-section="reviews"><i class="fas fa-star"></i> Reviews</div>
+                    <div class="admin-nav-item" data-section="banners"><i class="fas fa-image"></i> Banners</div>
+                    <div class="admin-nav-item" data-section="settings"><i class="fas fa-cog"></i> Settings</div>
+                </div>
+
+                <!-- Content -->
+                <div class="admin-content" id="adminContent">
+                    <!-- Dashboard -->
+                    <div id="section-dashboard">
+                        <h2>Dashboard</h2>
+                        <div class="stats-grid">
+                            <div class="stat-card"><div class="number">24</div><div class="label">Total Orders</div></div>
+                            <div class="stat-card"><div class="number">3</div><div class="label">Pending Orders</div></div>
+                            <div class="stat-card"><div class="number">21</div><div class="label">Completed Orders</div></div>
+                            <div class="stat-card"><div class="number">৳12,450</div><div class="label">Revenue</div></div>
+                            <div class="stat-card"><div class="number">10</div><div class="label">Products</div></div>
+                            <div class="stat-card"><div class="number">2</div><div class="label">Low Stock</div></div>
+                            <div class="stat-card"><div class="number">156</div><div class="label">Customers</div></div>
+                        </div>
+                        <h3>Recent Orders</h3>
+                        <table class="admin-table">
+                            <thead>
+                                <tr><th>Order ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody>
+                                ${DEMO_ORDERS.map(order => `
+                                    <tr>
+                                        <td>${order.id}</td>
+                                        <td>${order.customer}</td>
+                                        <td>${formatCurrency(order.total)}</td>
+                                        <td><span class="status-badge ${order.status.toLowerCase()}">${order.status}</span></td>
+                                        <td>${order.date}</td>
+                                        <td>
+                                            <div class="admin-actions">
+                                                <button onclick="showToast('Viewing order ${order.id}','success')">View</button>
+                                                <button onclick="showToast('Order ${order.id} updated','success')">Edit</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Products Section -->
+                    <div id="section-products" style="display:none;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+                            <h2>Products</h2>
+                            <button class="btn btn-primary" onclick="showToast('Add product form opened','success')">+ Add Product</button>
+                        </div>
+                        <table class="admin-table">
+                            <thead>
+                                <tr><th>Name</th><th>Price</th><th>Stock</th><th>Category</th><th>Status</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody>
+                                ${PRODUCTS.map(p => `
+                                    <tr>
+                                        <td>${p.name}</td>
+                                        <td>${formatCurrency(p.price)}</td>
+                                        <td>${p.stock}</td>
+                                        <td>${p.category}</td>
+                                        <td><span class="status-badge ${p.stock > 0 ? 'completed' : 'cancelled'}">${p.stock > 0 ? 'In Stock' : 'Out of Stock'}</span></td>
+                                        <td>
+                                            <div class="admin-actions">
+                                                <button onclick="showToast('Editing ${p.name}','success')">Edit</button>
+                                                <button onclick="showToast('${p.name} deleted','error')">Delete</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Orders Section -->
+                    <div id="section-orders" style="display:none;">
+                        <h2>Order Management</h2>
+                        <table class="admin-table">
+                            <thead>
+                                <tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody>
+                                ${DEMO_ORDERS.map(order => `
+                                    <tr>
+                                        <td>${order.id}</td>
+                                        <td>${order.customer}</td>
+                                        <td>${order.items.length}</td>
+                                        <td>${formatCurrency(order.total)}</td>
+                                        <td>${order.payment}</td>
+                                        <td><span class="status-badge ${order.status.toLowerCase()}">${order.status}</span></td>
+                                        <td>${order.date}</td>
+                                        <td>
+                                            <div class="admin-actions">
+                                                <button onclick="showToast('Viewing order ${order.id}','success')">View</button>
+                                                <button onclick="showToast('Order ${order.id} status updated','success')">Update</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Other sections placeholder -->
+                    <div id="section-categories" style="display:none;"><h2>Categories</h2><p style="color:var(--gray);">Manage product categories</p></div>
+                    <div id="section-customers" style="display:none;"><h2>Customers</h2><p style="color:var(--gray);">Manage customer accounts</p></div>
+                    <div id="section-coupons" style="display:none;"><h2>Coupons</h2><p style="color:var(--gray);">Manage discount coupons</p></div>
+                    <div id="section-offers" style="display:none;"><h2>Offers</h2><p style="color:var(--gray);">Manage promotional offers</p></div>
+                    <div id="section-flash-sales" style="display:none;"><h2>Flash Sales</h2><p style="color:var(--gray);">Manage flash sales</p></div>
+                    <div id="section-combos" style="display:none;"><h2>Combo Deals</h2><p style="color:var(--gray);">Manage combo deals</p></div>
+                    <div id="section-reviews" style="display:none;"><h2>Reviews</h2><p style="color:var(--gray);">Manage product reviews</p></div>
+                    <div id="section-banners" style="display:none;"><h2>Banners</h2><p style="color:var(--gray);">Manage homepage banners</p></div>
+                    <div id="section-settings" style="display:none;"><h2>Settings</h2><p style="color:var(--gray);">Store settings</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo">WATCH<span>OX</span></div>
+                    <p>Time, Redefined. Premium watches for every moment.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <a href="shop.html">Shop All</a>
+                    <a href="offers.html">Offers</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Support</h4>
+                    <a href="support.html">FAQ</a>
+                    <a href="support.html">Contact Us</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Contact</h4>
+                    <p><i class="fas fa-phone"></i> 01700-000000</p>
+                    <p><i class="fas fa-envelope"></i> support@watchox.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 WATCHOX. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <a href="index.html"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="shop.html"><i class="fas fa-store"></i><span>Shop</span></a>
+        <a href="wishlist.html"><i class="far fa-heart"></i><span>Wishlist</span></a>
+        <a href="cart.html"><i class="fas fa-shopping-bag"></i><span>Cart</span></a>
+        <a href="account.html"><i class="far fa-user"></i><span>Account</span></a>
+    </nav>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/data.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/wishlist.js"></script>
+    <script src="js/app.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Admin navigation
+            document.querySelectorAll('.admin-nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    document.querySelectorAll('.admin-nav-item').forEach(n => n.classList.remove('active'));
+                    this.classList.add('active');
+                    const section = this.dataset.section;
+                    document.querySelectorAll('[id^="section-"]').forEach(el => el.style.display = 'none');
+                    document.getElementById('section-' + section).style.display = 'block';
+                });
+            });
+            
+            updateCartBadge();
+            updateWishlistBadge();
+        });
+    </script>
+</body>
+</html>
