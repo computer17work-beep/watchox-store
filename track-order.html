@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Track Order | WATCHOX</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .track-page {
+            padding: 30px 0 60px;
+        }
+        .track-form {
+            background: var(--offwhite);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .track-form input {
+            width: 100%;
+            padding: 14px 20px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+        .track-timeline {
+            max-width: 500px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        .timeline-item {
+            display: flex;
+            gap: 16px;
+            padding: 12px 0;
+            position: relative;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 40px;
+            bottom: 0;
+            width: 2px;
+            background: var(--lightgray);
+        }
+        .timeline-item:last-child::before {
+            display: none;
+        }
+        .timeline-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--lightgray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            z-index: 1;
+        }
+        .timeline-item.completed .timeline-dot {
+            background: #27ae60;
+            color: #fff;
+        }
+        .timeline-item.active .timeline-dot {
+            background: var(--black);
+            color: #fff;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .timeline-content {
+            flex: 1;
+        }
+        .timeline-content h4 {
+            font-weight: 600;
+        }
+        .timeline-content p {
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="container">
+            <span><i class="fas fa-truck"></i> Free delivery on orders over ৳500</span>
+            <span><i class="fas fa-phone-alt"></i> Support: 01700-000000</span>
+            <span><i class="fas fa-tag"></i> Use WATCH10 for 10% off</span>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="container nav-inner">
+            <div class="logo"><a href="index.html">WATCH<span>OX</span></a></div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="shop.html">Shop</a>
+                <a href="offers.html">Offers</a>
+                <a href="index.html#new-arrivals">New</a>
+                <a href="index.html#flash-sale">Flash Sale</a>
+            </div>
+            <div class="nav-icons">
+                <a href="wishlist.html" class="wishlist-icon"><i class="far fa-heart"></i><span class="badge-count" id="wishlistCount">0</span></a>
+                <a href="cart.html" class="cart-icon"><i class="fas fa-shopping-bag"></i><span class="badge-count" id="cartCount">0</span></a>
+                <a href="account.html"><i class="far fa-user"></i></a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- TRACK CONTENT -->
+    <section class="track-page">
+        <div class="container">
+            <h1 style="text-align:center;margin-bottom:8px;">Track Your Order</h1>
+            <p style="text-align:center;color:var(--gray);margin-bottom:30px;">Enter your order ID and phone number to track your order</p>
+
+            <div class="track-form">
+                <input type="text" id="trackOrderId" placeholder="Order ID (e.g., ORD-2026-001)" value="ORD-2026-001">
+                <input type="tel" id="trackPhone" placeholder="Phone Number" value="01700-111111">
+                <button onclick="trackOrder()" class="btn btn-primary" style="width:100%;">Track Order</button>
+            </div>
+
+            <div id="trackResult"></div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo">WATCH<span>OX</span></div>
+                    <p>Time, Redefined. Premium watches for every moment.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <a href="shop.html">Shop All</a>
+                    <a href="offers.html">Offers</a>
+                    <a href="index.html#new-arrivals">New Arrivals</a>
+                    <a href="index.html#flash-sale">Flash Sale</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Support</h4>
+                    <a href="support.html">FAQ</a>
+                    <a href="support.html">Contact Us</a>
+                    <a href="track-order.html">Track Order</a>
+                    <a href="support.html">Returns</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Contact</h4>
+                    <p><i class="fas fa-phone"></i> 01700-000000</p>
+                    <p><i class="fas fa-envelope"></i> support@watchox.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Dhaka, Bangladesh</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 WATCHOX. All rights reserved.</p>
+                <div class="payment-icons">
+                    <i class="fas fa-credit-card"></i>
+                    <i class="fas fa-mobile-alt"></i>
+                    <span>bKash</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <a href="index.html"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="shop.html"><i class="fas fa-store"></i><span>Shop</span></a>
+        <a href="wishlist.html"><i class="far fa-heart"></i><span>Wishlist</span></a>
+        <a href="cart.html"><i class="fas fa-shopping-bag"></i><span>Cart</span></a>
+        <a href="account.html"><i class="far fa-user"></i><span>Account</span></a>
+    </nav>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/data.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/wishlist.js"></script>
+    <script src="js/app.js"></script>
+    
+    <script>
+        function trackOrder() {
+            const orderId = document.getElementById('trackOrderId').value.trim();
+            const phone = document.getElementById('trackPhone').value.trim();
+
+            if (!orderId || !phone) {
+                showToast('Please fill in all fields', 'error');
+                return;
+            }
+
+            // Find order in demo data
+            const order = DEMO_ORDERS.find(o => o.id === orderId && o.phone === phone);
+
+            if (!order) {
+                showToast('Order not found. Please check your details.', 'error');
+                document.getElementById('trackResult').innerHTML = `
+                    <div style="text-align:center;padding:40px;color:var(--gray);">
+                        <i class="fas fa-search" style="font-size:3rem;margin-bottom:16px;"></i>
+                        <p>No order found with the provided details.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Render tracking timeline
+            const statuses = order.tracking || [
+                { status: 'Order Placed', date: order.date, time: '10:00 AM' },
+                { status: 'Confirmed', date: order.date, time: '11:00 AM' },
+                { status: 'Processing', date: order.date, time: '02:00 PM' },
+                { status: 'Shipped', date: new Date(Date.now() - 2*24*60*60*1000).toISOString().split('T')[0], time: '03:00 PM' }
+            ];
+
+            // Add current status
+            const currentStatus = order.status || 'Processing';
+            const statusMap = ['Order Placed', 'Confirmed', 'Processing', 'Packed', 'Shipped', 'Out for Delivery', 'Delivered'];
+            const currentIndex = statusMap.indexOf(currentStatus);
+
+            document.getElementById('trackResult').innerHTML = `
+                <div style="max-width:500px;margin:30px auto;">
+                    <div style="background:var(--offwhite);border-radius:16px;padding:20px;margin-bottom:20px;">
+                        <h3>Order ${order.id}</h3>
+                        <p style="color:var(--gray);">Status: <strong style="color:#27ae60;">${currentStatus}</strong></p>
+                        <p style="color:var(--gray);font-size:0.85rem;">${order.items.length} items · ${formatCurrency(order.total)}</p>
+                    </div>
+                    <div class="track-timeline">
+                        ${statusMap.map((status, index) => {
+                            const isCompleted = index < currentIndex;
+                            const isActive = index === currentIndex;
+                            const tracking = order.tracking?.find(t => t.status === status);
+                            return `
+                                <div class="timeline-item ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''}">
+                                    <div class="timeline-dot">
+                                        ${isCompleted ? '<i class="fas fa-check"></i>' : isActive ? '<i class="fas fa-spinner fa-pulse"></i>' : index + 1}
+                                    </div>
+                                    <div class="timeline-content">
+                                        <h4>${status}</h4>
+                                        ${tracking ? `<p>${tracking.date} at ${tracking.time}</p>` : (isActive ? '<p>In progress...</p>' : '')}
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+
+            showToast('Order found!', 'success');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCartBadge();
+            updateWishlistBadge();
+            // Auto-track demo order
+            setTimeout(trackOrder, 500);
+        });
+    </script>
+</body>
+</html>
