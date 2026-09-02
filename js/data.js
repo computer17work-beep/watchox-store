@@ -1,169 +1,393 @@
 /**
- * WATCHOX - Centralized Store Data Engine
- * Pure JS Master Database & System Config
+ * WATCHOX - Master Style Sheet
+ * Theme: Monochrome Luxury Black & White (#0A0A0A Focus)
  */
 
-const WATCHOX_CONFIG = {
-  storeName: "WATCHOX",
-  slogan: "TIME, REDEFINED.",
-  currency: "৳",
-  freeShippingThreshold: 5000,
-  defaultShippingCost: 120,
-  contact: {
-    phone: "+880 1700-000000",
-    whatsapp: "+8801700000000",
-    email: "support@watchox.com",
-    address: "Level 4, Plot 12, Block C, Banani, Dhaka, Bangladesh"
+:root {
+  --bg-primary: #0A0A0A;
+  --bg-secondary: #000000;
+  --bg-card: #121212;
+  --bg-light: #F5F5F5;
+  --border-dark: #2A2A2A;
+  --border-light: #E0E0E0;
+  --text-primary: #FFFFFF;
+  --text-secondary: #8A8A8A;
+  --text-dark: #0A0A0A;
+  --accent-white: #FFFFFF;
+  --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  --max-width: 1280px;
+}
+
+/* --- Base & Reset --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: 70px; /* Space for mobile nav */
+}
+
+@media (min-width: 992px) {
+  body {
+    padding-bottom: 0;
   }
-};
+}
 
-const CATEGORIES = [
-  { id: "mens", name: "Men's Watches" },
-  { id: "womens", name: "Women's Watches" },
-  { id: "luxury", name: "Luxury Watches" },
-  { id: "casual", name: "Casual Watches" },
-  { id: "couple", name: "Couple Watches" },
-  { id: "smart", name: "Smart Watches" },
-  { id: "accessories", name: "Accessories" }
-];
+a {
+  color: inherit;
+  text-decoration: none;
+}
 
-const COUPONS = {
-  "WATCH10": { type: "percentage", value: 10, minSpend: 2000, maxDiscount: 1000 },
-  "SAVE20": { type: "fixed", value: 500, minSpend: 4000 },
-  "FREESHIP": { type: "shipping", value: 120, minSpend: 1500 }
-};
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
 
-const PRODUCTS = [
-  {
-    id: "watch-001",
-    sku: "WX-CHRONO-B1",
-    name: "WATCHOX Phantom Black Chronograph",
-    brand: "WATCHOX Masterwork",
-    category: "mens",
-    subcategory: "luxury",
-    price: 6500,
-    previousPrice: 8500,
-    stock: 14,
-    rating: 4.9,
-    reviewsCount: 42,
-    badge: "Bestseller",
-    isFlashSale: true,
-    isCombo: false,
-    isNew: true,
-    isTrending: true,
-    isPreorder: false,
-    freeDelivery: true,
-    flashSaleEndTime: new Date(Date.now() + 86400000 * 2).toISOString(), // 2 days left
-    images: [
-      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&q=80&w=800"
-    ],
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    description: "Forged in surgical-grade matte black stainless steel. Features sub-second chronograph performance, tactile pushers, and anti-reflective sapphire crystal face.",
-    specs: {
-      "Case Diameter": "42mm",
-      "Movement": "Japanese Quartz Chronograph",
-      "Water Resistance": "10 ATM / 100m",
-      "Strap Material": "Genuine PVD Coated Mesh Steel",
-      "Warranty": "2 Years Official"
-    },
-    variants: ["Matte Black", "Silver Accent"]
-  },
-  {
-    id: "watch-002",
-    sku: "WX-STEEL-LADY",
-    name: "WATCHOX Stellar Minimalist Rose Accent",
-    brand: "WATCHOX Luxe",
-    category: "womens",
-    subcategory: "casual",
-    price: 4200,
-    previousPrice: 5500,
-    stock: 8,
-    rating: 4.8,
-    reviewsCount: 19,
-    badge: "Limited",
-    isFlashSale: true,
-    isCombo: false,
-    isNew: true,
-    isTrending: false,
-    isPreorder: false,
-    freeDelivery: false,
-    flashSaleEndTime: new Date(Date.now() + 86400000 * 1).toISOString(),
-    images: [
-      "https://images.unsplash.com/photo-1539185441755-769473a23570?auto=format&fit=crop&q=80&w=800"
-    ],
-    videoUrl: "",
-    description: "Ultra-slim profile engineered for subtle elegance. Designed with clean minimalist indices and scratch-resistant mineral glass.",
-    specs: {
-      "Case Diameter": "34mm",
-      "Movement": "Swiss Quartz",
-      "Water Resistance": "3 ATM",
-      "Strap Material": "Italian Leather",
-      "Warranty": "1 Year Official"
-    },
-    variants: ["Black Strap", "Nude Leather"]
-  },
-  {
-    id: "combo-001",
-    sku: "WX-COMBO-HIS-HER",
-    name: "Exclusive Noir Couple Duo Pack",
-    brand: "WATCHOX Editions",
-    category: "couple",
-    subcategory: null,
-    price: 9800,
-    previousPrice: 14000,
-    stock: 5,
-    rating: 5.0,
-    reviewsCount: 31,
-    badge: "Combo Deal",
-    isFlashSale: false,
-    isCombo: true,
-    isNew: false,
-    isTrending: true,
-    isPreorder: false,
-    freeDelivery: true,
-    images: [
-      "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=800"
-    ],
-    videoUrl: "",
-    description: "The ultimate matching pair. Includes 1x Phantom Black Chronograph and 1x Stellar Minimalist Rose Accent inside a custom luxury display box.",
-    specs: {
-      "Package Includes": "2 Watches + Premium Gift Box",
-      "Combined Discount": "30% OFF Original Total",
-      "Warranty": "2 Years Each"
-    },
-    variants: ["Standard Pack"]
-  },
-  {
-    id: "watch-003",
-    sku: "WX-SMART-OLED",
-    name: "WATCHOX Horizon Smart Tactical",
-    brand: "WATCHOX Tech",
-    category: "smart",
-    subcategory: null,
-    price: 7900,
-    previousPrice: 9500,
-    stock: 22,
-    rating: 4.7,
-    reviewsCount: 56,
-    badge: "New Arrival",
-    isFlashSale: false,
-    isCombo: false,
-    isNew: true,
-    isTrending: true,
-    isPreorder: false,
-    freeDelivery: true,
-    images: [
-      "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&q=80&w=800"
-    ],
-    videoUrl: "",
-    description: "High-definition AMOLED display with full biometric tracking, custom monochrome watch faces, and 14-day battery life.",
-    specs: {
-      "Display": "1.43 inch AMOLED",
-      "Battery": "450 mAh (14 Days Typical)",
-      "Sensors": "Heart Rate, SpO2, Sleep Tracker",
-      "Water Resistance": "IP68"
-    },
-    variants: ["Stealth Black", "Titanium Gray"]
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* --- Layout Wrappers --- */
+.container {
+  width: 90%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.section {
+  padding: 60px 0;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 30px;
+  position: relative;
+  display: inline-block;
+}
+
+.section-title::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 40px;
+  height: 2px;
+  background-color: var(--text-primary);
+}
+
+/* --- Top Bar & Sticky Nav --- */
+.top-bar {
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-dark);
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: rgba(10, 10, 10, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-dark);
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 70px;
+}
+
+.logo {
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: 4px;
+  color: var(--accent-white);
+  text-transform: uppercase;
+}
+
+.nav-links {
+  display: none;
+  list-style: none;
+  gap: 24px;
+}
+
+@media (min-width: 992px) {
+  .nav-links {
+    display: flex;
   }
-];
+}
+
+.nav-links a {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-secondary);
+  transition: var(--transition);
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--text-primary);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.icon-btn {
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  position: relative;
+  padding: 4px;
+}
+
+.badge-count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background-color: var(--accent-white);
+  color: var(--text-dark);
+  font-size: 0.65rem;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- Product Cards & Grid --- */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.product-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-dark);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+}
+
+.product-card:hover {
+  border-color: #444;
+  transform: translateY(-4px);
+}
+
+.card-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: var(--accent-white);
+  color: var(--text-dark);
+  font-size: 0.65rem;
+  font-weight: bold;
+  padding: 4px 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  z-index: 2;
+}
+
+.card-img-wrap {
+  position: relative;
+  padding-top: 100%;
+  overflow: hidden;
+  background-color: #1a1a1a;
+}
+
+.card-img-wrap img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition);
+}
+
+.product-card:hover .card-img-wrap img {
+  transform: scale(1.05);
+}
+
+.card-info {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.card-title {
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.current-price {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.prev-price {
+  color: var(--text-secondary);
+  text-decoration: line-through;
+  font-size: 0.85rem;
+}
+
+.btn-primary {
+  background-color: var(--accent-white);
+  color: var(--text-dark);
+  border: 1px solid var(--accent-white);
+  padding: 10px 18px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: var(--transition);
+  width: 100%;
+  text-align: center;
+}
+
+.btn-primary:hover {
+  background-color: transparent;
+  color: var(--text-primary);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-dark);
+  padding: 10px 18px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: var(--transition);
+  text-align: center;
+}
+
+.btn-secondary:hover {
+  border-color: var(--text-primary);
+}
+
+/* --- Free Delivery Progress Bar --- */
+.free-shipping-bar {
+  background: var(--bg-card);
+  border: 1px solid var(--border-dark);
+  padding: 12px 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 6px;
+  background-color: var(--border-dark);
+  border-radius: 3px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--text-primary);
+  width: 0%;
+  transition: width 0.4s ease;
+}
+
+/* --- Toast Notifications --- */
+#toast-container {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast {
+  background-color: var(--accent-white);
+  color: var(--text-dark);
+  padding: 12px 20px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  border-radius: 2px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* --- Mobile Bottom Nav --- */
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background-color: var(--bg-secondary);
+  border-top: 1px solid var(--border-dark);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1000;
+}
+
+@media (min-width: 992px) {
+  .mobile-bottom-nav {
+    display: none;
+  }
+}
+
+.mobile-nav-item {
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.mobile-nav-item.active {
+  color: var(--text-primary);
+}
