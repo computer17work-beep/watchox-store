@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>WATCHOX · Premium Watches</title>
+    <meta name="description" content="WATCHOX - Premium watches for the modern era. Shop luxury, smart, and casual watches with free delivery.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- TOP BAR -->
+    <div class="top-bar" id="topBar">
+        <div class="container">
+            <span><i class="fas fa-truck"></i> Free delivery on orders over ৳500</span>
+            <span><i class="fas fa-phone-alt"></i> Support: 01700-000000</span>
+            <span><i class="fas fa-tag"></i> Use WATCH10 for 10% off</span>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-inner">
+            <div class="logo"><a href="index.html">WATCH<span>OX</span></a></div>
+            <div class="nav-links" id="navLinks">
+                <a href="index.html" class="active">Home</a>
+                <a href="shop.html">Shop</a>
+                <a href="offers.html">Offers</a>
+                <a href="#new-arrivals">New</a>
+                <a href="#flash-sale">Flash Sale</a>
+            </div>
+            <div class="nav-icons">
+                <span class="search-icon" onclick="toggleSearch()"><i class="fas fa-search"></i></span>
+                <a href="wishlist.html" class="wishlist-icon"><i class="far fa-heart"></i><span class="badge-count" id="wishlistCount">0</span></a>
+                <a href="cart.html" class="cart-icon"><i class="fas fa-shopping-bag"></i><span class="badge-count" id="cartCount">0</span></a>
+                <a href="account.html"><i class="far fa-user"></i></a>
+                <span class="menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></span>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="index.html">Home</a>
+            <a href="shop.html">Shop</a>
+            <a href="offers.html">Offers</a>
+            <a href="#new-arrivals">New Arrivals</a>
+            <a href="#flash-sale">Flash Sale</a>
+            <a href="wishlist.html">Wishlist</a>
+            <a href="account.html">Account</a>
+        </div>
+    </nav>
+
+    <!-- SEARCH OVERLAY -->
+    <div class="search-overlay" id="searchOverlay">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search for watches, brands, categories..." oninput="liveSearch(this.value)">
+            <button onclick="closeSearch()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="search-results" id="searchResults"></div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="container hero-content">
+            <div class="hero-text">
+                <span class="hero-badge">New Collection 2026</span>
+                <h1>TIME, <br>REDEFINED.</h1>
+                <p>Luxury watches crafted for the modern era. Explore our premium collection of timeless timepieces.</p>
+                <div class="hero-cta">
+                    <a href="shop.html" class="btn btn-primary">Shop Now</a>
+                    <a href="#featured-categories" class="btn btn-outline">Explore Collection</a>
+                </div>
+                <div class="hero-stats">
+                    <div><span>10K+</span> Happy Customers</div>
+                    <div><span>50+</span> Premium Brands</div>
+                    <div><span>4.9⭐</span> Average Rating</div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?w=600&h=400&fit=crop" alt="WATCHOX Premium Watches">
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURED CATEGORIES -->
+    <section class="featured-categories" id="featured-categories">
+        <div class="container">
+            <h2 class="section-title">Featured Categories</h2>
+            <div class="categories-grid" id="categoriesGrid"></div>
+        </div>
+    </section>
+
+    <!-- BEST SELLING -->
+    <section class="best-selling">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Best Selling</h2>
+                <a href="shop.html" class="view-all">View All →</a>
+            </div>
+            <div class="products-grid" id="bestSellingGrid"></div>
+        </div>
+    </section>
+
+    <!-- FLASH SALE -->
+    <section class="flash-sale" id="flash-sale">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">⚡ Flash Sale</h2>
+                <div class="timer" id="flashTimer">
+                    <div class="timer-block"><span id="hours">02</span><label>Hours</label></div>
+                    <div class="timer-block"><span id="minutes">45</span><label>Mins</label></div>
+                    <div class="timer-block"><span id="seconds">30</span><label>Secs</label></div>
+                </div>
+            </div>
+            <div class="products-grid" id="flashGrid"></div>
+        </div>
+    </section>
+
+    <!-- NEW ARRIVALS -->
+    <section class="new-arrivals" id="new-arrivals">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">New Arrivals</h2>
+                <a href="shop.html?filter=new" class="view-all">View All →</a>
+            </div>
+            <div class="products-grid" id="newArrivalsGrid"></div>
+        </div>
+    </section>
+
+    <!-- OFFER ZONE -->
+    <section class="offer-zone">
+        <div class="container">
+            <h2 class="section-title">Offer Zone</h2>
+            <div class="products-grid" id="offerGrid"></div>
+        </div>
+    </section>
+
+    <!-- BRAND TRUST -->
+    <section class="trust-section">
+        <div class="container">
+            <div class="trust-grid">
+                <div class="trust-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <h4>Authentic Products</h4>
+                    <p>100% genuine watches</p>
+                </div>
+                <div class="trust-item">
+                    <i class="fas fa-lock"></i>
+                    <h4>Secure Checkout</h4>
+                    <p>Safe & encrypted payment</p>
+                </div>
+                <div class="trust-item">
+                    <i class="fas fa-truck"></i>
+                    <h4>Fast Delivery</h4>
+                    <p>Free delivery over ৳500</p>
+                </div>
+                <div class="trust-item">
+                    <i class="fas fa-undo"></i>
+                    <h4>Easy Returns</h4>
+                    <p>7-day return policy</p>
+                </div>
+                <div class="trust-item">
+                    <i class="fas fa-headset"></i>
+                    <h4>Customer Support</h4>
+                    <p>24/7 dedicated support</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEWSLETTER -->
+    <section class="newsletter">
+        <div class="container">
+            <div class="newsletter-content">
+                <h3>Subscribe to our Newsletter</h3>
+                <p>Get the latest updates on new arrivals & exclusive offers</p>
+                <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
+                    <input type="email" placeholder="Enter your email" required>
+                    <button type="submit" class="btn btn-primary">Subscribe</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- RECENTLY VIEWED -->
+    <section class="recently-viewed" id="recentlyViewed">
+        <div class="container">
+            <h2 class="section-title">Recently Viewed</h2>
+            <div class="products-grid" id="recentlyViewedGrid"></div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo">WATCH<span>OX</span></div>
+                    <p>Time, Redefined. Premium watches for every moment.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <a href="shop.html">Shop All</a>
+                    <a href="offers.html">Offers</a>
+                    <a href="#new-arrivals">New Arrivals</a>
+                    <a href="#flash-sale">Flash Sale</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Support</h4>
+                    <a href="support.html">FAQ</a>
+                    <a href="support.html">Contact Us</a>
+                    <a href="track-order.html">Track Order</a>
+                    <a href="support.html">Returns</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Contact</h4>
+                    <p><i class="fas fa-phone"></i> 01700-000000</p>
+                    <p><i class="fas fa-envelope"></i> support@watchox.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Dhaka, Bangladesh</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 WATCHOX. All rights reserved.</p>
+                <div class="payment-icons">
+                    <i class="fas fa-credit-card"></i>
+                    <i class="fas fa-mobile-alt"></i>
+                    <span>bKash</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- BOTTOM NAV (Mobile) -->
+    <nav class="bottom-nav">
+        <a href="index.html"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="shop.html"><i class="fas fa-store"></i><span>Shop</span></a>
+        <a href="wishlist.html"><i class="far fa-heart"></i><span>Wishlist</span></a>
+        <a href="cart.html"><i class="fas fa-shopping-bag"></i><span>Cart</span></a>
+        <a href="account.html"><i class="far fa-user"></i><span>Account</span></a>
+    </nav>
+
+    <!-- TOAST NOTIFICATION -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/data.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/wishlist.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
