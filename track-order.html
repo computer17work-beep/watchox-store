@@ -1,272 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Track Order | WATCHOX</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        .track-page {
-            padding: 30px 0 60px;
-        }
-        .track-form {
-            background: var(--offwhite);
-            border-radius: 16px;
-            padding: 30px;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        .track-form input {
-            width: 100%;
-            padding: 14px 20px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            margin-bottom: 12px;
-            font-size: 1rem;
-        }
-        .track-timeline {
-            max-width: 500px;
-            margin: 30px auto;
-            padding: 20px;
-        }
-        .timeline-item {
-            display: flex;
-            gap: 16px;
-            padding: 12px 0;
-            position: relative;
-        }
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            left: 20px;
-            top: 40px;
-            bottom: 0;
-            width: 2px;
-            background: var(--lightgray);
-        }
-        .timeline-item:last-child::before {
-            display: none;
-        }
-        .timeline-dot {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--lightgray);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            z-index: 1;
-        }
-        .timeline-item.completed .timeline-dot {
-            background: #27ae60;
-            color: #fff;
-        }
-        .timeline-item.active .timeline-dot {
-            background: var(--black);
-            color: #fff;
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        .timeline-content {
-            flex: 1;
-        }
-        .timeline-content h4 {
-            font-weight: 600;
-        }
-        .timeline-content p {
-            color: var(--gray);
-            font-size: 0.85rem;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Track Order | WATCHOX</title>
+  <meta name="description" content="Track your WATCHOX order status in real-time." />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .track-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      padding: 30px;
+      border-radius: 4px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid var(--border-dark);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #fff;
+    }
+    .payment-tag {
+      display: inline-block;
+      padding: 6px 14px;
+      background: rgba(76, 175, 80, 0.15);
+      border: 1px solid #4CAF50;
+      font-size: 0.8rem;
+      color: #4CAF50;
+      margin-left: 8px;
+    }
+  </style>
 </head>
 <body>
-    <!-- TOP BAR -->
-    <div class="top-bar">
-        <div class="container">
-            <span><i class="fas fa-truck"></i> Free delivery on orders over ৳500</span>
-            <span><i class="fas fa-phone-alt"></i> Support: 01700-000000</span>
-            <span><i class="fas fa-tag"></i> Use WATCH10 for 10% off</span>
+
+  <!-- Header Rendered Dynamically -->
+  <header id="main-header"></header>
+
+  <section class="section">
+    <div class="container">
+      <h1 class="section-title">Order Status & Tracking</h1>
+
+      <!-- Order Lookup Input Form -->
+      <div class="track-card" style="margin-bottom: 40px;">
+        <h2 style="font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;">Track Your Shipment</h2>
+        <form onsubmit="handleTrackSearch(event)" style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px;">
+          <input type="text" id="track-order-id" placeholder="Order ID (e.g. WX-123456)" required style="padding: 12px; background: var(--bg-primary); border: 1px solid var(--border-dark); color: #fff;" />
+          <input type="tel" id="track-phone" placeholder="Phone Number" required style="padding: 12px; background: var(--bg-primary); border: 1px solid var(--border-dark); color: #fff;" />
+          <button type="submit" class="btn-primary" style="width: auto; padding: 0 24px;">Track</button>
+        </form>
+      </div>
+
+      <!-- Result Container -->
+      <div id="tracking-result-wrapper" style="display: none;">
+        <div class="track-card">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <div style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase;">Tracking Number</div>
+              <h2 id="res-order-id" style="font-size: 1.4rem; font-weight: 800;">WX-000000</h2>
+              <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">Placed by: <span id="res-name" style="color: #fff;"></span> (<span id="res-phone"></span>)</div>
+            </div>
+            <div>
+              <span class="status-badge" id="res-status">Processing</span>
+              <span class="payment-tag" id="res-payment-type">Cash On Delivery</span>
+            </div>
+          </div>
+
+          <!-- Chronological Shipment Timeline -->
+          <h3 style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px;">Shipment Progress</h3>
+          
+          <div id="timeline-container">
+            <!-- Timeline Injected Dynamically -->
+          </div>
+
+          <!-- Cash on Delivery Advisory Notice -->
+          <div style="margin-top: 30px; padding: 16px; background: var(--bg-primary); border: 1px solid var(--border-dark); border-left: 3px solid #fff; font-size: 0.85rem; color: var(--text-secondary);">
+            <strong style="color: #fff;">Cash on Delivery Notice:</strong> Please keep the exact payable amount ready in cash when the courier delivery agent arrives. Inspect the parcel before completing payment.
+          </div>
         </div>
+      </div>
+
     </div>
+  </section>
 
-    <!-- NAVBAR -->
-    <nav class="navbar">
-        <div class="container nav-inner">
-            <div class="logo"><a href="index.html">WATCH<span>OX</span></a></div>
-            <div class="nav-links">
-                <a href="index.html">Home</a>
-                <a href="shop.html">Shop</a>
-                <a href="offers.html">Offers</a>
-                <a href="index.html#new-arrivals">New</a>
-                <a href="index.html#flash-sale">Flash Sale</a>
-            </div>
-            <div class="nav-icons">
-                <a href="wishlist.html" class="wishlist-icon"><i class="far fa-heart"></i><span class="badge-count" id="wishlistCount">0</span></a>
-                <a href="cart.html" class="cart-icon"><i class="fas fa-shopping-bag"></i><span class="badge-count" id="cartCount">0</span></a>
-                <a href="account.html"><i class="far fa-user"></i></a>
-            </div>
-        </div>
-    </nav>
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/app.js"></script>
 
-    <!-- TRACK CONTENT -->
-    <section class="track-page">
-        <div class="container">
-            <h1 style="text-align:center;margin-bottom:8px;">Track Your Order</h1>
-            <p style="text-align:center;color:var(--gray);margin-bottom:30px;">Enter your order ID and phone number to track your order</p>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const orderId = params.get("orderId");
+      const phone = params.get("phone");
 
-            <div class="track-form">
-                <input type="text" id="trackOrderId" placeholder="Order ID (e.g., ORD-2026-001)" value="ORD-2026-001">
-                <input type="tel" id="trackPhone" placeholder="Phone Number" value="01700-111111">
-                <button onclick="trackOrder()" class="btn btn-primary" style="width:100%;">Track Order</button>
-            </div>
-
-            <div id="trackResult"></div>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-brand">
-                    <div class="logo">WATCH<span>OX</span></div>
-                    <p>Time, Redefined. Premium watches for every moment.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                        <a href="#"><i class="fab fa-whatsapp"></i></a>
-                    </div>
-                </div>
-                <div class="footer-links">
-                    <h4>Quick Links</h4>
-                    <a href="shop.html">Shop All</a>
-                    <a href="offers.html">Offers</a>
-                    <a href="index.html#new-arrivals">New Arrivals</a>
-                    <a href="index.html#flash-sale">Flash Sale</a>
-                </div>
-                <div class="footer-links">
-                    <h4>Support</h4>
-                    <a href="support.html">FAQ</a>
-                    <a href="support.html">Contact Us</a>
-                    <a href="track-order.html">Track Order</a>
-                    <a href="support.html">Returns</a>
-                </div>
-                <div class="footer-links">
-                    <h4>Contact</h4>
-                    <p><i class="fas fa-phone"></i> 01700-000000</p>
-                    <p><i class="fas fa-envelope"></i> support@watchox.com</p>
-                    <p><i class="fas fa-map-marker-alt"></i> Dhaka, Bangladesh</p>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>© 2026 WATCHOX. All rights reserved.</p>
-                <div class="payment-icons">
-                    <i class="fas fa-credit-card"></i>
-                    <i class="fas fa-mobile-alt"></i>
-                    <span>bKash</span>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- BOTTOM NAV -->
-    <nav class="bottom-nav">
-        <a href="index.html"><i class="fas fa-home"></i><span>Home</span></a>
-        <a href="shop.html"><i class="fas fa-store"></i><span>Shop</span></a>
-        <a href="wishlist.html"><i class="far fa-heart"></i><span>Wishlist</span></a>
-        <a href="cart.html"><i class="fas fa-shopping-bag"></i><span>Cart</span></a>
-        <a href="account.html"><i class="far fa-user"></i><span>Account</span></a>
-    </nav>
-
-    <div class="toast-container" id="toastContainer"></div>
-
-    <script src="js/data.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/cart.js"></script>
-    <script src="js/wishlist.js"></script>
-    <script src="js/app.js"></script>
-    
-    <script>
-        function trackOrder() {
-            const orderId = document.getElementById('trackOrderId').value.trim();
-            const phone = document.getElementById('trackPhone').value.trim();
-
-            if (!orderId || !phone) {
-                showToast('Please fill in all fields', 'error');
-                return;
-            }
-
-            // Find order in demo data
-            const order = DEMO_ORDERS.find(o => o.id === orderId && o.phone === phone);
-
-            if (!order) {
-                showToast('Order not found. Please check your details.', 'error');
-                document.getElementById('trackResult').innerHTML = `
-                    <div style="text-align:center;padding:40px;color:var(--gray);">
-                        <i class="fas fa-search" style="font-size:3rem;margin-bottom:16px;"></i>
-                        <p>No order found with the provided details.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            // Render tracking timeline
-            const statuses = order.tracking || [
-                { status: 'Order Placed', date: order.date, time: '10:00 AM' },
-                { status: 'Confirmed', date: order.date, time: '11:00 AM' },
-                { status: 'Processing', date: order.date, time: '02:00 PM' },
-                { status: 'Shipped', date: new Date(Date.now() - 2*24*60*60*1000).toISOString().split('T')[0], time: '03:00 PM' }
-            ];
-
-            // Add current status
-            const currentStatus = order.status || 'Processing';
-            const statusMap = ['Order Placed', 'Confirmed', 'Processing', 'Packed', 'Shipped', 'Out for Delivery', 'Delivered'];
-            const currentIndex = statusMap.indexOf(currentStatus);
-
-            document.getElementById('trackResult').innerHTML = `
-                <div style="max-width:500px;margin:30px auto;">
-                    <div style="background:var(--offwhite);border-radius:16px;padding:20px;margin-bottom:20px;">
-                        <h3>Order ${order.id}</h3>
-                        <p style="color:var(--gray);">Status: <strong style="color:#27ae60;">${currentStatus}</strong></p>
-                        <p style="color:var(--gray);font-size:0.85rem;">${order.items.length} items · ${formatCurrency(order.total)}</p>
-                    </div>
-                    <div class="track-timeline">
-                        ${statusMap.map((status, index) => {
-                            const isCompleted = index < currentIndex;
-                            const isActive = index === currentIndex;
-                            const tracking = order.tracking?.find(t => t.status === status);
-                            return `
-                                <div class="timeline-item ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''}">
-                                    <div class="timeline-dot">
-                                        ${isCompleted ? '<i class="fas fa-check"></i>' : isActive ? '<i class="fas fa-spinner fa-pulse"></i>' : index + 1}
-                                    </div>
-                                    <div class="timeline-content">
-                                        <h4>${status}</h4>
-                                        ${tracking ? `<p>${tracking.date} at ${tracking.time}</p>` : (isActive ? '<p>In progress...</p>' : '')}
-                                    </div>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-            `;
-
-            showToast('Order found!', 'success');
+      if (orderId && phone) {
+        document.getElementById("track-order-id").value = orderId;
+        document.getElementById("track-phone").value = phone;
+        fetchAndDisplayOrder(orderId, phone);
+      } else {
+        // Load recent order from local storage if exists
+        const lastOrder = JSON.parse(localStorage.getItem("watchox_last_order") || "null");
+        if (lastOrder) {
+          fetchAndDisplayOrder(lastOrder.orderId, lastOrder.phone);
         }
+      }
+    });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            updateCartBadge();
-            updateWishlistBadge();
-            // Auto-track demo order
-            setTimeout(trackOrder, 500);
-        });
-    </script>
+    function handleTrackSearch(e) {
+      e.preventDefault();
+      const orderId = document.getElementById("track-order-id").value;
+      const phone = document.getElementById("track-phone").value;
+      fetchAndDisplayOrder(orderId, phone);
+    }
+
+    function fetchAndDisplayOrder(orderId, phone) {
+      const wrapper = document.getElementById("tracking-result-wrapper");
+      wrapper.style.display = "block";
+
+      document.getElementById("res-order-id").textContent = orderId;
+      document.getElementById("res-phone").textContent = phone;
+
+      const lastOrder = JSON.parse(localStorage.getItem("watchox_last_order") || "null");
+      if (lastOrder && lastOrder.orderId === orderId) {
+        document.getElementById("res-name").textContent = lastOrder.name;
+      } else {
+        document.getElementById("res-name").textContent = "Valued Customer";
+      }
+
+      // Render Timeline
+      const timelineEvents = [
+        { title: "Order Confirmed & Placed", time: "Step 1 - Completed", done: true, desc: "Order details received. Processing for dispatch." },
+        { title: "Quality Check & Packaging", time: "Step 2 - Completed", done: true, desc: "Timepiece inspected and packed securely." },
+        { title: "Handed over to Courier", time: "Step 3 - In Transit", done: true, desc: "Package dispatched via express courier delivery." },
+        { title: "Out for Cash on Delivery", time: "Step 4 - Pending", done: false, desc: "Rider will deliver the package to your address." }
+      ];
+
+      const timelineContainer = document.getElementById("timeline-container");
+      timelineContainer.innerHTML = `
+        <div style="border-left: 2px solid var(--border-dark); padding-left: 20px; margin-left: 10px;">
+          ${timelineEvents.map(ev => `
+            <div style="position: relative; margin-bottom: 24px;">
+              <div style="position: absolute; left: -26px; top: 0; width: 10px; height: 10px; border-radius: 50%; background: ${ev.done ? '#fff' : 'var(--border-dark)'}; border: 2px solid var(--bg-card);"></div>
+              <div style="font-weight: bold; font-size: 0.9rem; color: ${ev.done ? '#fff' : 'var(--text-secondary)'};">${ev.title}</div>
+              <div style="font-size: 0.75rem; color: var(--text-secondary);">${ev.time}</div>
+              <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">${ev.desc}</div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+  </script>
 </body>
 </html>
