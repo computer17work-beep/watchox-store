@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Checkout | WATCHOX</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="container">
+            <span><i class="fas fa-truck"></i> Free delivery on orders over ৳500</span>
+            <span><i class="fas fa-phone-alt"></i> Support: 01700-000000</span>
+            <span><i class="fas fa-tag"></i> Use WATCH10 for 10% off</span>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="container nav-inner">
+            <div class="logo"><a href="index.html">WATCH<span>OX</span></a></div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="shop.html">Shop</a>
+                <a href="offers.html">Offers</a>
+                <a href="index.html#new-arrivals">New</a>
+                <a href="index.html#flash-sale">Flash Sale</a>
+            </div>
+            <div class="nav-icons">
+                <span class="search-icon" onclick="toggleSearch()"><i class="fas fa-search"></i></span>
+                <a href="wishlist.html" class="wishlist-icon"><i class="far fa-heart"></i><span class="badge-count" id="wishlistCount">0</span></a>
+                <a href="cart.html" class="cart-icon"><i class="fas fa-shopping-bag"></i><span class="badge-count" id="cartCount">0</span></a>
+                <a href="account.html"><i class="far fa-user"></i></a>
+                <span class="menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></span>
+            </div>
+        </div>
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="index.html">Home</a>
+            <a href="shop.html">Shop</a>
+            <a href="offers.html">Offers</a>
+            <a href="index.html#new-arrivals">New Arrivals</a>
+            <a href="index.html#flash-sale">Flash Sale</a>
+            <a href="wishlist.html">Wishlist</a>
+            <a href="account.html">Account</a>
+        </div>
+    </nav>
+
+    <!-- SEARCH OVERLAY -->
+    <div class="search-overlay" id="searchOverlay">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search for watches, brands, categories..." oninput="liveSearch(this.value)">
+            <button onclick="closeSearch()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="search-results" id="searchResults"></div>
+    </div>
+
+    <!-- CHECKOUT CONTENT -->
+    <section style="padding:30px 0 60px;">
+        <div class="container">
+            <h1 style="margin-bottom:30px;">Checkout</h1>
+            
+            <div style="display:grid;grid-template-columns:1fr 380px;gap:30px;" id="checkoutContainer">
+                <!-- Checkout Form -->
+                <div>
+                    <!-- Customer Information -->
+                    <div style="background:var(--offwhite);border-radius:16px;padding:24px;margin-bottom:20px;">
+                        <h3 style="margin-bottom:16px;">Customer Information</h3>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                            <input type="text" placeholder="First Name" style="padding:12px 16px;border:1px solid var(--border);border-radius:8px;">
+                            <input type="text" placeholder="Last Name" style="padding:12px 16px;border:1px solid var(--border);border-radius:8px;">
+                            <input type="email" placeholder="Email" style="padding:12px 16px;border:1px solid var(--border);border-radius:8px;grid-column:span 2;">
+                            <input type="tel" placeholder="Phone Number" style="padding:12px 16px;border:1px solid var(--border);border-radius:8px;grid-column:span 2;">
+                        </div>
+                    </div>
+
+                    <!-- Shipping Address -->
+                    <div style="background:var(--offwhite);border-radius:16px;padding:24px;margin-bottom:20px;">
+                        <h3 style="margin-bottom:16px;">Shipping Address</h3>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                            <input type="text" placeholder="Address Line 1" style="padding:12px 16px;border:1px solid var(--border);border-radius:8px;grid-column:span 2;">
+                            <input type="text" placeholder="Address Line 2" style="padding:12px 16px;border:1px solid var(--border);border-radius:8px;grid-column:span 2;">
+                            <input type="text" placeholder="City" style="padding:12px 16px;border:1px solid var(--border);border-radius:8px;">
+                            <input type="text" placeholder="District" style="padding:12px 16px;border:1px solid var(--border);border-radius:8px;">
+                            <input type="text" placeholder="Post Code" style="padding:12px 16px;border:1px solid var(--border);border-radius:8px;">
+                            <input type="text" placeholder="Country" style="padding:12px 16px;border:1px solid var(--border);border-radius:8px;" value="Bangladesh">
+                        </div>
+                    </div>
+
+                    <!-- Delivery Method -->
+                    <div style="background:var(--offwhite);border-radius:16px;padding:24px;margin-bottom:20px;">
+                        <h3 style="margin-bottom:16px;">Delivery Method</h3>
+                        <div style="display:flex;flex-direction:column;gap:8px;">
+                            <label style="display:flex;align-items:center;gap:12px;padding:12px;border:2px solid var(--border);border-radius:8px;cursor:pointer;">
+                                <input type="radio" name="delivery" checked>
+                                <div>
+                                    <strong>Standard Delivery</strong>
+                                    <div style="font-size:0.85rem;color:var(--gray);">3-5 business days - Free</div>
+                                </div>
+                            </label>
+                            <label style="display:flex;align-items:center;gap:12px;padding:12px;border:2px solid var(--border);border-radius:8px;cursor:pointer;">
+                                <input type="radio" name="delivery">
+                                <div>
+                                    <strong>Express Delivery</strong>
+                                    <div style="font-size:0.85rem;color:var(--gray);">1-2 business days - ৳120</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div style="background:var(--offwhite);border-radius:16px;padding:24px;margin-bottom:20px;">
+                        <h3 style="margin-bottom:16px;">Payment Method</h3>
+                        <div style="display:flex;flex-direction:column;gap:8px;">
+                            <label style="display:flex;align-items:center;gap:12px;padding:12px;border:2px solid var(--border);border-radius:8px;cursor:pointer;">
+                                <input type="radio" name="payment" checked>
+                                <div>
+                                    <strong>Cash on Delivery</strong>
+                                    <div style="font-size:0.85rem;color:var(--gray);">Pay when you receive</div>
+                                </div>
+                            </label>
+                            <label style="display:flex;align-items:center;gap:12px;padding:12px;border:2px solid var(--border);border-radius:8px;cursor:pointer;">
+                                <input type="radio" name="payment">
+                                <div>
+                                    <strong>bKash</strong>
+                                    <div style="font-size:0.85rem;color:var(--gray);">Mobile payment</div>
+                                </div>
+                            </label>
+                            <label style="display:flex;align-items:center;gap:12px;padding:12px;border:2px solid var(--border);border-radius:8px;cursor:pointer;">
+                                <input type="radio" name="payment">
+                                <div>
+                                    <strong>Credit / Debit Card</strong>
+                                    <div style="font-size:0.85rem;color:var(--gray);">Visa, Mastercard, Amex</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Order Notes -->
+                    <div style="background:var(--offwhite);border-radius:16px;padding:24px;margin-bottom:20px;">
+                        <h3 style="margin-bottom:16px;">Order Notes (Optional)</h3>
+                        <textarea placeholder="Any special instructions for delivery..." style="width:100%;padding:12px 16px;border:1px solid var(--border);border-radius:8px;min-height:80px;resize:vertical;"></textarea>
+                    </div>
+
+                    <!-- Terms -->
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
+                        <input type="checkbox" id="terms">
+                        <label for="terms">I agree to the <a href="#" style="text-decoration:underline;">Terms & Conditions</a></label>
+                    </div>
+
+                    <button onclick="placeOrder()" class="btn btn-primary" style="width:100%;padding:16px;font-size:1.1rem;">
+                        Place Order
+                    </button>
+                </div>
+
+                <!-- Order Summary -->
+                <div>
+                    <div style="background:var(--offwhite);border-radius:16px;padding:24px;position:sticky;top:100px;">
+                        <h3 style="margin-bottom:16px;">Order Summary</h3>
+                        <div id="checkoutSummary">
+                            <!-- Rendered by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo">WATCH<span>OX</span></div>
+                    <p>Time, Redefined. Premium watches for every moment.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>
