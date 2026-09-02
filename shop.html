@@ -1,256 +1,242 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Shopping Cart | WATCHOX</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        .cart-page {
-            padding: 30px 0 60px;
-        }
-        .cart-item {
-            display: flex;
-            gap: 16px;
-            padding: 16px 0;
-            border-bottom: 1px solid var(--lightgray);
-            align-items: center;
-        }
-        .cart-item img {
-            width: 100px;
-            height: 100px;
-            border-radius: 8px;
-            object-fit: cover;
-        }
-        .cart-item-details {
-            flex: 1;
-        }
-        .cart-item-details h4 {
-            margin-bottom: 4px;
-        }
-        .cart-item-details .brand {
-            color: var(--gray);
-            font-size: 0.85rem;
-        }
-        .cart-item-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-top: 8px;
-        }
-        .cart-item-actions button {
-            background: var(--offwhite);
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-        }
-        .cart-item-actions button:hover {
-            background: var(--lightgray);
-        }
-        .cart-item-actions .remove-btn {
-            color: #e74c3c;
-            background: none;
-            font-size: 0.85rem;
-        }
-        .cart-item-actions .remove-btn:hover {
-            text-decoration: underline;
-        }
-        .cart-summary {
-            background: var(--offwhite);
-            border-radius: 16px;
-            padding: 24px;
-            position: sticky;
-            top: 100px;
-        }
-        .cart-summary .summary-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-        }
-        .cart-summary .total-row {
-            border-top: 2px solid var(--border);
-            padding-top: 16px;
-            margin-top: 8px;
-            font-weight: 700;
-            font-size: 1.2rem;
-        }
-        .coupon-input-group {
-            display: flex;
-            gap: 8px;
-            margin: 16px 0;
-        }
-        .coupon-input-group input {
-            flex: 1;
-            padding: 10px 16px;
-            border: 1px solid var(--border);
-            border-radius: 30px;
-            font-size: 0.9rem;
-        }
-        .empty-cart {
-            text-align: center;
-            padding: 60px 0;
-        }
-        .empty-cart i {
-            font-size: 4rem;
-            color: var(--gray);
-            margin-bottom: 16px;
-        }
-        @media (max-width: 768px) {
-            .cart-layout {
-                grid-template-columns: 1fr !important;
-            }
-            .cart-item {
-                flex-wrap: wrap;
-            }
-            .cart-item img {
-                width: 80px;
-                height: 80px;
-            }
-            .cart-summary {
-                position: static;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shop Collection | WATCHOX</title>
+  <meta name="description" content="Explore and filter the complete collection of luxury chronographs, tactical smartwatches, and minimalist timepieces." />
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .shop-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+    @media (min-width: 992px) {
+      .shop-layout {
+        grid-template-columns: 260px 1fr;
+      }
+    }
+    .filter-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      padding: 20px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    .filter-group {
+      margin-bottom: 20px;
+    }
+    .filter-group label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .filter-group label:hover {
+      color: var(--text-primary);
+    }
+    .filter-title {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border-dark);
+      padding-bottom: 6px;
+    }
+  </style>
 </head>
 <body>
-    <!-- TOP BAR -->
-    <div class="top-bar">
-        <div class="container">
-            <span><i class="fas fa-truck"></i> Free delivery on orders over ৳500</span>
-            <span><i class="fas fa-phone-alt"></i> Support: 01700-000000</span>
-            <span><i class="fas fa-tag"></i> Use WATCH10 for 10% off</span>
-        </div>
+
+  <!-- Header Rendered Dynamically -->
+  <header id="main-header"></header>
+
+  <section class="section">
+    <div class="container">
+      <h1 class="section-title">Shop Collection</h1>
+
+      <div class="shop-layout">
+        <!-- Sidebar Filters -->
+        <aside>
+          <div class="filter-card">
+            <!-- Category Filter -->
+            <div class="filter-group">
+              <div class="filter-title">Category</div>
+              <label><input type="radio" name="category" value="all" checked onchange="applyFilters()"> All Categories</label>
+              <label><input type="radio" name="category" value="mens" onchange="applyFilters()"> Men's Watches</label>
+              <label><input type="radio" name="category" value="womens" onchange="applyFilters()"> Women's Watches</label>
+              <label><input type="radio" name="category" value="luxury" onchange="applyFilters()"> Luxury Watches</label>
+              <label><input type="radio" name="category" value="smart" onchange="applyFilters()"> Smart Watches</label>
+              <label><input type="radio" name="category" value="couple" onchange="applyFilters()"> Couple Watches</label>
+            </div>
+
+            <!-- Price Filter -->
+            <div class="filter-group">
+              <div class="filter-title">Max Price (<span id="price-val">৳15000</span>)</div>
+              <input type="range" id="price-range" min="3000" max="15000" step="500" value="15000" style="width: 100%;" oninput="updatePriceLabel(this.value)" onchange="applyFilters()" />
+            </div>
+
+            <!-- Badges & Features Filter -->
+            <div class="filter-group">
+              <div class="filter-title">Filter By</div>
+              <label><input type="checkbox" id="filter-flash" onchange="applyFilters()"> Flash Sale</label>
+              <label><input type="checkbox" id="filter-combo" onchange="applyFilters()"> Combo Deals</label>
+              <label><input type="checkbox" id="filter-shipping" onchange="applyFilters()"> Free Delivery</label>
+            </div>
+
+            <button class="btn-secondary" onclick="resetFilters()" style="width: 100%; margin-top: 10px;">Reset Filters</button>
+          </div>
+        </aside>
+
+        <!-- Main Product Grid & Sorting -->
+        <main>
+          <!-- Controls Header -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--bg-card); padding: 12px 20px; border: 1px solid var(--border-dark);">
+            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+              Showing <span id="product-count" style="color: #fff; font-weight: bold;">0</span> timepieces
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 0.85rem; color: var(--text-secondary);">Sort By:</span>
+              <select id="sort-select" onchange="applyFilters()" style="background: var(--bg-primary); color: #fff; border: 1px solid var(--border-dark); padding: 6px 12px; font-size: 0.85rem;">
+                <option value="popular">Popularity</option>
+                <option value="newest">Newest</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="rating">Highest Rating</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Grid Container -->
+          <div id="shop-product-grid" class="product-grid"></div>
+        </main>
+      </div>
     </div>
+  </section>
 
-    <!-- NAVBAR -->
-    <nav class="navbar">
-        <div class="container nav-inner">
-            <div class="logo"><a href="index.html">WATCH<span>OX</span></a></div>
-            <div class="nav-links">
-                <a href="index.html">Home</a>
-                <a href="shop.html">Shop</a>
-                <a href="offers.html">Offers</a>
-                <a href="index.html#new-arrivals">New</a>
-                <a href="index.html#flash-sale">Flash Sale</a>
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/app.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Parse URL parameters (e.g., shop.html?category=mens)
+      const urlParams = new URLSearchParams(window.location.search);
+      const categoryParam = urlParams.get("category");
+      const filterParam = urlParams.get("filter");
+
+      if (categoryParam) {
+        const radio = document.querySelector(`input[name="category"][value="${categoryParam}"]`);
+        if (radio) radio.checked = true;
+      }
+
+      if (filterParam === "wishlist") {
+        renderWishlistOnly();
+        return;
+      }
+
+      applyFilters();
+    });
+
+    function updatePriceLabel(val) {
+      document.getElementById("price-val").textContent = WATCHOX_CONFIG.currency + val;
+    }
+
+    function applyFilters() {
+      const selectedCategory = document.querySelector('input[name="category"]:checked').value;
+      const maxPrice = parseFloat(document.getElementById("price-range").value);
+      const isFlash = document.getElementById("filter-flash").checked;
+      const isCombo = document.getElementById("filter-combo").checked;
+      const isShipping = document.getElementById("filter-shipping").checked;
+      const sortBy = document.getElementById("sort-select").value;
+
+      let filtered = PRODUCTS.filter(p => {
+        if (selectedCategory !== "all" && p.category !== selectedCategory) return false;
+        if (p.price > maxPrice) return false;
+        if (isFlash && !p.isFlashSale) return false;
+        if (isCombo && !p.isCombo) return false;
+        if (isShipping && !p.freeDelivery) return false;
+        return true;
+      });
+
+      // Sort logic
+      if (sortBy === "price-low") filtered.sort((a, b) => a.price - b.price);
+      else if (sortBy === "price-high") filtered.sort((a, b) => b.price - a.price);
+      else if (sortBy === "rating") filtered.sort((a, b) => b.rating - a.rating);
+      else if (sortBy === "newest") filtered.sort((a, b) => (b.isNew ? 1 : -1));
+
+      document.getElementById("product-count").textContent = filtered.length;
+      renderShopGrid(filtered);
+    }
+
+    function renderWishlistOnly() {
+      const wishlistIds = StoreEngine.getWishlist();
+      const wishlistProducts = PRODUCTS.filter(p => wishlistIds.includes(p.id));
+      document.querySelector(".section-title").textContent = "Your Wishlist";
+      document.getElementById("product-count").textContent = wishlistProducts.length;
+      renderShopGrid(wishlistProducts);
+    }
+
+    function resetFilters() {
+      document.querySelector('input[name="category"][value="all"]').checked = true;
+      document.getElementById("price-range").value = 15000;
+      updatePriceLabel(15000);
+      document.getElementById("filter-flash").checked = false;
+      document.getElementById("filter-combo").checked = false;
+      document.getElementById("filter-shipping").checked = false;
+      document.getElementById("sort-select").value = "popular";
+      applyFilters();
+    }
+
+    function renderShopGrid(items) {
+      const container = document.getElementById("shop-product-grid");
+      if (items.length === 0) {
+        container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-secondary);">No timepieces match your current criteria.</div>`;
+        return;
+      }
+
+      container.innerHTML = items.map(p => {
+        const isWish = StoreEngine.isInWishlist(p.id);
+        return `
+          <div class="product-card">
+            ${p.badge ? `<span class="card-badge">${p.badge}</span>` : ''}
+            <button onclick="toggleWishlist('${p.id}', this)" style="position: absolute; top: 10px; right: 10px; z-index: 5; color: ${isWish ? '#fff' : '#8A8A8A'}; font-size: 1.2rem;">
+              ${isWish ? '♥' : '♡'}
+            </button>
+            <div class="card-img-wrap">
+              <a href="product.html?id=${p.id}">
+                <img src="${p.images[0]}" alt="${p.name}" loading="lazy" />
+              </a>
             </div>
-            <div class="nav-icons">
-                <span class="search-icon" onclick="toggleSearch()"><i class="fas fa-search"></i></span>
-                <a href="wishlist.html" class="wishlist-icon"><i class="far fa-heart"></i><span class="badge-count" id="wishlistCount">0</span></a>
-                <a href="cart.html" class="cart-icon"><i class="fas fa-shopping-bag"></i><span class="badge-count" id="cartCount">0</span></a>
-                <a href="account.html"><i class="far fa-user"></i></a>
-                <span class="menu-toggle" onclick="toggleMobileMenu()"><i class="fas fa-bars"></i></span>
+            <div class="card-info">
+              <h3 class="card-title"><a href="product.html?id=${p.id}">${p.name}</a></h3>
+              <div class="card-price-row">
+                <span class="current-price">${WATCHOX_CONFIG.currency}${p.price}</span>
+                ${p.previousPrice ? `<span class="prev-price">${WATCHOX_CONFIG.currency}${p.previousPrice}</span>` : ''}
+              </div>
+              <button class="btn-primary" onclick="handleAddToCart('${p.id}')">Add to Cart</button>
             </div>
-        </div>
-        <div class="mobile-menu" id="mobileMenu">
-            <a href="index.html">Home</a>
-            <a href="shop.html">Shop</a>
-            <a href="offers.html">Offers</a>
-            <a href="index.html#new-arrivals">New Arrivals</a>
-            <a href="index.html#flash-sale">Flash Sale</a>
-            <a href="wishlist.html">Wishlist</a>
-            <a href="account.html">Account</a>
-        </div>
-    </nav>
+          </div>
+        `;
+      }).join('');
+    }
 
-    <!-- SEARCH OVERLAY -->
-    <div class="search-overlay" id="searchOverlay">
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search for watches, brands, categories..." oninput="liveSearch(this.value)">
-            <button onclick="closeSearch()"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="search-results" id="searchResults"></div>
-    </div>
+    function toggleWishlist(id, btn) {
+      const added = StoreEngine.toggleWishlist(id);
+      btn.textContent = added ? '♥' : '♡';
+      btn.style.color = added ? '#fff' : '#8A8A8A';
+      AppEngine.showToast(added ? "Added to Wishlist" : "Removed from Wishlist");
+    }
 
-    <!-- CART CONTENT -->
-    <section class="cart-page">
-        <div class="container">
-            <h1 style="margin-bottom:30px;">Shopping Cart</h1>
-            
-            <!-- Delivery Progress -->
-            <div id="deliveryProgress" style="margin-bottom:20px;"></div>
-
-            <div class="cart-layout" style="display:grid;grid-template-columns:1fr 380px;gap:30px;" id="cartContainer">
-                <!-- Cart items will be rendered by JavaScript -->
-            </div>
-        </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-brand">
-                    <div class="logo">WATCH<span>OX</span></div>
-                    <p>Time, Redefined. Premium watches for every moment.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-youtube"></i></a>
-                        <a href="#"><i class="fab fa-whatsapp"></i></a>
-                    </div>
-                </div>
-                <div class="footer-links">
-                    <h4>Quick Links</h4>
-                    <a href="shop.html">Shop All</a>
-                    <a href="offers.html">Offers</a>
-                    <a href="index.html#new-arrivals">New Arrivals</a>
-                    <a href="index.html#flash-sale">Flash Sale</a>
-                </div>
-                <div class="footer-links">
-                    <h4>Support</h4>
-                    <a href="support.html">FAQ</a>
-                    <a href="support.html">Contact Us</a>
-                    <a href="track-order.html">Track Order</a>
-                    <a href="support.html">Returns</a>
-                </div>
-                <div class="footer-links">
-                    <h4>Contact</h4>
-                    <p><i class="fas fa-phone"></i> 01700-000000</p>
-                    <p><i class="fas fa-envelope"></i> support@watchox.com</p>
-                    <p><i class="fas fa-map-marker-alt"></i> Dhaka, Bangladesh</p>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>© 2026 WATCHOX. All rights reserved.</p>
-                <div class="payment-icons">
-                    <i class="fas fa-credit-card"></i>
-                    <i class="fas fa-mobile-alt"></i>
-                    <span>bKash</span>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- BOTTOM NAV -->
-    <nav class="bottom-nav">
-        <a href="index.html"><i class="fas fa-home"></i><span>Home</span></a>
-        <a href="shop.html"><i class="fas fa-store"></i><span>Shop</span></a>
-        <a href="wishlist.html"><i class="far fa-heart"></i><span>Wishlist</span></a>
-        <a href="cart.html" class="active"><i class="fas fa-shopping-bag"></i><span>Cart</span></a>
-        <a href="account.html"><i class="far fa-user"></i><span>Account</span></a>
-    </nav>
-
-    <div class="toast-container" id="toastContainer"></div>
-
-    <script src="js/data.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/cart.js"></script>
-    <script src="js/wishlist.js"></script>
-    <script src="js/app.js"></script>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            renderCartPage();
-            renderDeliveryProgress();
-            updateCartBadge();
-            updateWishlistBadge();
-        });
-    </script>
+    function handleAddToCart(id) {
+      if (StoreEngine.addToCart(id)) {
+        AppEngine.showToast("Product added to cart!");
+      }
+    }
+  </script>
 </body>
 </html>
