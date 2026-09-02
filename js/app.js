@@ -1,245 +1,184 @@
-// ============ MAIN APPLICATION ============
+/**
+ * WATCHOX - Master Application Engine
+ * Global Navbar, Live Search Overlay, Toast Notifications & Dynamic Renderers
+ */
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Update badges
-    updateCartBadge();
-    updateWishlistBadge();
-
-    // Render categories
-    renderCategories();
-
-    // Render products
-    renderBestSelling();
-    renderFlashSale();
-    renderNewArrivals();
-    renderOffers();
-    renderRecentlyViewed();
-
-    // Initialize flash timer
-    initFlashTimer();
+document.addEventListener("DOMContentLoaded", () => {
+  AppEngine.init();
 });
 
-// ============ RENDER FUNCTIONS ============
+const AppEngine = {
+  init() {
+    this.renderNavbar();
+    this.renderMobileBottomNav();
+    this.setupEventListeners();
+    this.updateBadges();
+    this.initFlashSaleTimers();
 
-function renderCategories() {
-    const grid = document.getElementById('categoriesGrid');
-    if (!grid) return;
+    // Event listeners for reactive state updates
+    window.addEventListener("watchox:cart-updated", () => this.updateBadges());
+    window.addEventListener("watchox:wishlist-updated", () => this.updateBadges());
+  },
 
-    const categories = CATEGORIES.map(cat => {
-        const count = PRODUCTS.filter(p => p.category.toLowerCase() === cat.name.toLowerCase().replace("'s", "")).length;
-        return { ...cat, count };
+  // --- Dynamic Layout Renderers ---
+  renderNavbar() {
+    const header = document.getElementById("main-header");
+    if (!header) return;
+
+    header.innerHTML = `
+      <div class="top-bar">
+        FREE DELIVERY ON ORDERS OVER ${WATCHOX_CONFIG.currency}${WATCHOX_CONFIG.freeShippingThreshold} | HOTLINE: ${WATCHOX_CONFIG.contact.phone}
+      </div>
+      <nav class="navbar">
+        <div class="container nav-container">
+          <a href="index.html" class="logo">${WATCHOX_CONFIG.storeName}</a>
+          <ul class="nav-links">
+            <li><a href="index.html" class="${this.isActivePage('index.html')}">Home</a></li>
+            <li><a href="shop.html" class="${this.isActivePage('shop.html')}">Shop</a></li>
+            <li><a href="offers.html" class="${this.isActivePage('offers.html')}">Offers & Combos</a></li>
+            <li><a href="track-order.html" class="${this.isActivePage('track-order.html')}">Track Order</a></li>
+          </ul>
+          <div class="nav-actions">
+            <button class="icon-btn" id="open-search-btn" title="Search">🔍</button>
+            <a href="shop.html?filter=wishlist" class="icon-btn" title="Wishlist">
+              ♡ <span class="badge-count" id="wishlist-count">0</span>
+            </a>
+            <a href="checkout.html" class="icon-btn" title="Cart">
+              🛒 <span class="badge-count" id="cart-count">0</span>
+            </a>
+          </div>
+        </div>
+      </nav>
+    `;
+  },
+
+  renderMobileBottomNav() {
+    if (document.querySelector(".mobile-bottom-nav")) return;
+    const nav = document.createElement("div");
+    nav.className = "mobile-bottom-nav";
+    nav.innerHTML = `
+      <a href="index.html" class="mobile-nav-item ${this.isActivePage('index.html')}">🏠 <span>Home</span></a>
+      <a href="shop.html" class="mobile-nav-item ${this.isActivePage('shop.html')}">🛍️ <span>Shop</span></a>
+      <a href="offers.html" class="mobile-nav-item ${this.isActivePage('offers.html')}">🔥 <span>Offers</span></a>
+      <a href="checkout.html" class="mobile-nav-item ${this.isActivePage('checkout.html')}">🛒 <span>Cart</span></a>
+    `;
+    document.body.appendChild(nav);
+  },
+
+  isActivePage(pageName) {
+    const path = window.location.pathname;
+    if (pageName === 'index.html' && (path.endsWith('/') || path.endsWith('index.html'))) return 'active';
+    return path.includes(pageName) ? 'active' : '';
+  },
+
+  // --- Reactive UI Badges ---
+  updateBadges() {
+    const cartBadge = document.getElementById("cart-count");
+    const wishlistBadge = document.getElementById("wishlist-count");
+
+    if (cartBadge) cartBadge.textContent = StoreEngine.getCartCount();
+    if (wishlistBadge) wishlistBadge.textContent = StoreEngine.getWishlist().length;
+  },
+
+  // --- Global Event Handling & Search Overlay ---
+  setupEventListeners() {
+    document.addEventListener("click", (e) => {
+      if (e.target.id === "open-search-btn") {
+        this.openSearchOverlay();
+      }
     });
+  },
 
-    grid.innerHTML = categories.map(cat => `
-        <div class="category-card" onclick="window.location.href='shop.html?category=${cat.id}'">
-            <i class="fas ${cat.icon}"></i>
-            <h4>${cat.name}</h4>
-            <p style="font-size:0.75rem;color:var(--gray);">${cat.count} Products</p>
+  openSearchOverlay() {
+    let overlay = document.getElementById("search-overlay");
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.id = "search-overlay";
+      overlay.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(10,10,10,0.98); z-index: 10000; padding: 40px 20px;
+        display: flex; flex-direction: column; align-items: center;
+      `;
+      overlay.innerHTML = `
+        <div style="width: 100%; max-width: 600px; position: relative;">
+          <button id="close-search-btn" style="position: absolute; right: 0; top: -30px; color: #fff; font-size: 1.5rem;">✕</button>
+          <input type="text" id="search-input" placeholder="Search luxury timepieces..." 
+            style="width: 100%; padding: 16px; background: #121212; border: 1px solid #2A2A2A; color: #fff; font-size: 1.1rem; border-radius: 4px;" autofocus />
+          <div id="search-results" style="margin-top: 20px; width: 100%; max-height: 400px; overflow-y: auto;"></div>
         </div>
-    `).join('');
-}
+      `;
+      document.body.appendChild(overlay);
 
-function renderBestSelling() {
-    const grid = document.getElementById('bestSellingGrid');
-    if (!grid) return;
-    const products = getFeaturedProducts(4);
-    grid.innerHTML = renderProductCards(products);
-}
-
-function renderFlashSale() {
-    const grid = document.getElementById('flashGrid');
-    if (!grid) return;
-    const products = getFlashSaleProducts(4);
-    grid.innerHTML = renderProductCards(products);
-}
-
-function renderNewArrivals() {
-    const grid = document.getElementById('newArrivalsGrid');
-    if (!grid) return;
-    const products = getNewArrivals(4);
-    grid.innerHTML = renderProductCards(products);
-}
-
-function renderOffers() {
-    const grid = document.getElementById('offerGrid');
-    if (!grid) return;
-    const products = getOfferProducts(4);
-    grid.innerHTML = renderProductCards(products);
-}
-
-function renderRecentlyViewed() {
-    const grid = document.getElementById('recentlyViewedGrid');
-    if (!grid) return;
-    const recentIds = getFromStorage('recently_viewed', []);
-    const products = recentIds.map(id => getProductById(id)).filter(Boolean);
-    if (products.length === 0) {
-        grid.innerHTML = '<p style="color:var(--gray);">No products viewed yet. Start exploring!</p>';
-        return;
-    }
-    grid.innerHTML = renderProductCards(products.slice(0, 4));
-}
-
-function renderProductCards(products) {
-    if (!products || products.length === 0) {
-        return '<p style="color:var(--gray);">No products available</p>';
-    }
-
-    return products.map(product => {
-        const inWishlist = getFromStorage('wishlist', []).includes(product.id);
-        const discount = product.oldPrice ? Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100) : 0;
-
-        return `
-            <div class="product-card" data-id="${product.id}">
-                <div class="product-img" style="background-image: url('${product.images[0] || 'https://placecats.com/300/300'}');">
-                    ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ''}
-                    <button class="product-wishlist-btn ${inWishlist ? 'active' : ''}" onclick="toggleWishlist('${product.id}')">
-                        <i class="${inWishlist ? 'fas' : 'far'} fa-heart"></i>
-                    </button>
-                </div>
-                <div class="product-name">${product.name}</div>
-                <div class="product-rating">
-                    ${getStarRating(product.rating)} (${product.reviews})
-                </div>
-                <div>
-                    <span class="product-price">${formatCurrency(product.price)}</span>
-                    ${product.oldPrice ? `<span class="product-old-price">${formatCurrency(product.oldPrice)}</span>` : ''}
-                    ${discount > 0 ? `<span style="color:#e74c3c;font-size:0.75rem;margin-left:8px;">-${discount}%</span>` : ''}
-                </div>
-                <div class="product-stock ${product.stock <= 0 ? 'out-of-stock' : ''}">
-                    ${product.stock > 0 ? `In Stock (${product.stock})` : 'Out of Stock'}
-                </div>
-                <div class="product-actions">
-                    <button class="btn-add-cart" onclick="addToCart('${product.id}')" ${product.stock <= 0 ? 'disabled' : ''}>
-                        <i class="fas fa-cart-plus"></i> Add
-                    </button>
-                    <button class="btn-quick-view" onclick="quickView('${product.id}')">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-function getStarRating(rating) {
-    const fullStars = Math.floor(rating);
-    const halfStar = rating % 1 >= 0.5;
-    let stars = '';
-    for (let i = 0; i < fullStars; i++) stars += '<i class="fas fa-star"></i>';
-    if (halfStar) stars += '<i class="fas fa-star-half-alt"></i>';
-    while (stars.length < 15) stars += '<i class="far fa-star"></i>';
-    return stars + ' ' + rating.toFixed(1);
-}
-
-// ============ FLASH TIMER ============
-
-function initFlashTimer() {
-    let seconds = 30,
-        minutes = 45,
-        hours = 2;
-    const hoursEl = document.getElementById('hours');
-    const minutesEl = document.getElementById('minutes');
-    const secondsEl = document.getElementById('seconds');
-
-    setInterval(() => {
-        seconds--;
-        if (seconds < 0) {
-            seconds = 59;
-            minutes--;
-            if (minutes < 0) {
-                minutes = 59;
-                hours--;
-                if (hours < 0) {
-                    hours = 23;
-                    minutes = 59;
-                    seconds = 59;
-                }
-            }
+      document.getElementById("close-search-btn").onclick = () => overlay.remove();
+      
+      const searchInput = document.getElementById("search-input");
+      searchInput.addEventListener("input", (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        const resultsContainer = document.getElementById("search-results");
+        if (query.length === 0) {
+          resultsContainer.innerHTML = "";
+          return;
         }
-        if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
-        if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, '0');
-        if (secondsEl) secondsEl.textContent = String(seconds).padStart(2, '0');
-    }, 1000);
-}
 
-// ============ SEARCH ============
+        const filtered = PRODUCTS.filter(p => 
+          p.name.toLowerCase().includes(query) || 
+          p.brand.toLowerCase().includes(query) ||
+          p.category.toLowerCase().includes(query)
+        );
 
-function toggleSearch() {
-    const overlay = document.getElementById('searchOverlay');
-    overlay.classList.toggle('active');
-    if (overlay.classList.contains('active')) {
-        document.getElementById('searchInput').focus();
-    }
-}
-
-function closeSearch() {
-    document.getElementById('searchOverlay').classList.remove('active');
-}
-
-function liveSearch(query) {
-    const results = document.getElementById('searchResults');
-    if (!query.trim()) {
-        results.innerHTML = '';
-        return;
-    }
-
-    const filtered = PRODUCTS.filter(p =>
-        p.name.toLowerCase().includes(query.toLowerCase()) ||
-        p.brand.toLowerCase().includes(query.toLowerCase()) ||
-        p.category.toLowerCase().includes(query.toLowerCase())
-    );
-
-    if (filtered.length === 0) {
-        results.innerHTML = '<p style="color:var(--gray);">No products found</p>';
-        return;
-    }
-
-    results.innerHTML = filtered.slice(0, 6).map(p => `
-        <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--lightgray);cursor:pointer;" onclick="window.location.href='product.html?id=${p.id}'">
-            <img src="${p.images[0] || 'https://placecats.com/50/50'}" style="width:40px;height:40px;border-radius:8px;object-fit:cover;">
+        resultsContainer.innerHTML = filtered.map(p => `
+          <a href="product.html?id=${p.id}" style="display: flex; align-items: center; gap: 15px; padding: 10px; border-bottom: 1px solid #2A2A2A; color: #fff;">
+            <img src="${p.images[0]}" style="width: 50px; height: 50px; object-fit: cover;" />
             <div>
-                <div style="font-weight:600;">${p.name}</div>
-                <div style="font-size:0.85rem;color:var(--gray);">${formatCurrency(p.price)}</div>
+              <div style="font-weight: bold; font-size: 0.95rem;">${p.name}</div>
+              <div style="font-size: 0.85rem; color: #8A8A8A;">${WATCHOX_CONFIG.currency}${p.price}</div>
             </div>
-        </div>
-    `).join('');
-}
-
-// ============ MOBILE MENU ============
-
-function toggleMobileMenu() {
-    document.getElementById('mobileMenu').classList.toggle('open');
-}
-
-// ============ NEWSLETTER ============
-
-function subscribeNewsletter(event) {
-    event.preventDefault();
-    const email = event.target.querySelector('input').value;
-    if (email) {
-        showToast('Subscribed successfully!', 'success');
-        event.target.reset();
+          </a>
+        `).join('') || `<div style="color: #8A8A8A; padding: 20px; text-align: center;">No timepieces found.</div>`;
+      });
     }
-}
+  },
 
-// ============ QUICK VIEW ============
-
-function quickView(productId) {
-    const product = getProductById(productId);
-    if (!product) return;
-    // Show quick view modal (simplified - redirect to product page)
-    window.location.href = 'product.html?id=' + productId;
-}
-
-// ============ KEYBOARD SHORTCUTS ============
-
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        closeSearch();
-        document.getElementById('mobileMenu')?.classList.remove('open');
+  // --- Dynamic Toast System ---
+  showToast(message) {
+    let container = document.getElementById("toast-container");
+    if (!container) {
+      container = document.createElement("div");
+      container.id = "toast-container";
+      document.body.appendChild(container);
     }
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        toggleSearch();
-    }
-});
+
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.opacity = "0";
+      toast.style.transition = "opacity 0.3s ease";
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  },
+
+  // --- Real-Time Countdown Timer ---
+  initFlashSaleTimers() {
+    setInterval(() => {
+      document.querySelectorAll("[data-countdown]").forEach(el => {
+        const endTime = new Date(el.dataset.countdown).getTime();
+        const now = new Date().getTime();
+        const diff = endTime - now;
+
+        if (diff <= 0) {
+          el.textContent = "EXPIRED";
+          return;
+        }
+
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        el.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      });
+    }, 1000);
+  }
+};
