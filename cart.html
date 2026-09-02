@@ -1,144 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Shopping Cart | WATCHOX</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
-    <style>
-        .cart-page {
-            padding: 30px 0 60px;
-        }
-        .cart-item {
-            display: flex;
-            gap: 16px;
-            padding: 16px 0;
-            border-bottom: 1px solid var(--lightgray);
-            align-items: center;
-        }
-        .cart-item img {
-            width: 100px;
-            height: 100px;
-            border-radius: 8px;
-            object-fit: cover;
-        }
-        .cart-item-details {
-            flex: 1;
-        }
-        .cart-item-details h4 {
-            margin-bottom: 4px;
-        }
-        .cart-item-details .brand {
-            color: var(--gray);
-            font-size: 0.85rem;
-        }
-        .cart-item-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-top: 8px;
-        }
-        .cart-item-actions button {
-            background: var(--offwhite);
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-        }
-        .cart-item-actions button:hover {
-            background: var(--lightgray);
-        }
-        .cart-item-actions .remove-btn {
-            color: #e74c3c;
-            background: none;
-            font-size: 0.85rem;
-        }
-        .cart-item-actions .remove-btn:hover {
-            text-decoration: underline;
-        }
-        .cart-summary {
-            background: var(--offwhite);
-            border-radius: 16px;
-            padding: 24px;
-            position: sticky;
-            top: 100px;
-        }
-        .cart-summary .summary-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-        }
-        .cart-summary .total-row {
-            border-top: 2px solid var(--border);
-            padding-top: 16px;
-            margin-top: 8px;
-            font-weight: 700;
-            font-size: 1.2rem;
-        }
-        .coupon-input-group {
-            display: flex;
-            gap: 8px;
-            margin: 16px 0;
-        }
-        .coupon-input-group input {
-            flex: 1;
-            padding: 10px 16px;
-            border: 1px solid var(--border);
-            border-radius: 30px;
-            font-size: 0.9rem;
-        }
-        .empty-cart {
-            text-align: center;
-            padding: 60px 0;
-        }
-        .empty-cart i {
-            font-size: 4rem;
-            color: var(--gray);
-            margin-bottom: 16px;
-        }
-        @media (max-width: 768px) {
-            .cart-layout {
-                grid-template-columns: 1fr !important;
-            }
-            .cart-item {
-                flex-wrap: wrap;
-            }
-            .cart-item img {
-                width: 80px;
-                height: 80px;
-            }
-            .cart-summary {
-                position: static;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="google" content="notranslate" />
+  <title>Shopping Cart | WATCHOX</title>
+  <link rel="stylesheet" href="./css/style.css" />
 </head>
 <body>
-    <!-- TOP BAR -->
-    <div class="top-bar">
-        <div class="container">
-            <span><i class="fas fa-truck"></i> Free delivery on orders over ৳500</span>
-            <span><i class="fas fa-phone-alt"></i> Support: 01700-000000</span>
-            <span><i class="fas fa-tag"></i> Use WATCH10 for 10% off</span>
-        </div>
-    </div>
+  <header id="main-header"></header>
 
-    <!-- NAVBAR -->
-    <nav class="navbar">
-        <div class="container nav-inner">
-            <div class="logo"><a href="index.html">WATCH<span>OX</span></a></div>
-            <div class="nav-links">
-                <a href="index.html">Home</a>
-                <a href="shop.html">Shop</a>
-                <a href="offers.html">Offers</a>
-                <a href="index.html#new-arrivals">New</a>
-                <a href="index.html#flash-sale">Flash Sale</a>
+  <section class="section">
+    <div class="container">
+      <h1 class="section-title">Your Shopping Cart</h1>
+      <div id="cart-page-items" style="margin-bottom: 30px;"></div>
+      <div style="text-align: right;">
+        <a href="checkout.html" class="btn-primary">Proceed to Checkout</a>
+      </div>
+    </div>
+  </section>
+
+  <script src="./js/data.js"></script>
+  <script src="./js/store.js"></script>
+  <script src="./js/utils.js"></script>
+  <script src="./js/cart.js"></script>
+  <script src="./js/app.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      renderCartTable();
+    });
+
+    function renderCartTable() {
+      const cart = StoreEngine.getCart();
+      const container = document.getElementById("cart-page-items");
+      if (cart.length === 0) {
+        container.innerHTML = "<p style='text-align:center;'>Your cart is currently empty.</p>";
+        return;
+      }
+      container.innerHTML = cart.map(item => {
+        const p = PRODUCTS.find(prod => prod.id === item.id);
+        return `
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-dark); padding:15px 0;">
+            <div>
+              <h3>${p.name}</h3>
+              <p>Qty: ${item.quantity}</p>
             </div>
-            <div class="nav-icons">
-                <span class="search-icon" onclick="toggleSearch()"><i class="fas fa-search"></i></span>
-                <a href="wishlist.html" class="wishlist-icon"><i class="far fa-heart"></i><span
+            <div>
+              <p>৳${p.price * item.quantity}</p>
+              <button onclick="CartModule.removeItem('${item.id}', '${item.variant}')" style="color:red; background:none; border:none; cursor:pointer;">Remove</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  </script>
+</body>
+</html>
