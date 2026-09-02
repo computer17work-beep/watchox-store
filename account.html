@@ -246,3 +246,90 @@
                 <div class="footer-links">
                     <h4>Quick Links</h4>
                     <a href="shop.html">Shop All</a>
+                    <a href="offers.html">Offers</a>
+                    <a href="index.html#new-arrivals">New Arrivals</a>
+                    <a href="index.html#flash-sale">Flash Sale</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Support</h4>
+                    <a href="support.html">FAQ</a>
+                    <a href="support.html">Contact Us</a>
+                    <a href="track-order.html">Track Order</a>
+                    <a href="support.html">Returns</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Contact</h4>
+                    <p><i class="fas fa-phone"></i> 01700-000000</p>
+                    <p><i class="fas fa-envelope"></i> support@watchox.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Dhaka, Bangladesh</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 WATCHOX. All rights reserved.</p>
+                <div class="payment-icons">
+                    <i class="fas fa-credit-card"></i>
+                    <i class="fas fa-mobile-alt"></i>
+                    <span>bKash</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <a href="index.html"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="shop.html"><i class="fas fa-store"></i><span>Shop</span></a>
+        <a href="wishlist.html"><i class="far fa-heart"></i><span>Wishlist</span></a>
+        <a href="cart.html"><i class="fas fa-shopping-bag"></i><span>Cart</span></a>
+        <a href="account.html" class="active"><i class="far fa-user"></i><span>Account</span></a>
+    </nav>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/data.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/wishlist.js"></script>
+    <script src="js/app.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab switching
+            document.querySelectorAll('.account-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('.account-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    document.querySelectorAll('.account-content').forEach(c => c.classList.remove('active'));
+                    document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+                });
+            });
+
+            // Render order history
+            const orderHtml = DEMO_ORDERS.map(order => `
+                <div class="order-card">
+                    <div>
+                        <strong>${order.id}</strong>
+                        <div style="font-size:0.85rem;color:var(--gray);">${order.date}</div>
+                        <div style="font-size:0.85rem;">${order.items.length} items · ${formatCurrency(order.total)}</div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                        <span class="order-status ${order.status.toLowerCase()}">${order.status}</span>
+                        <a href="track-order.html" style="font-size:0.85rem;color:var(--gray);">Track</a>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('orderHistory').innerHTML = orderHtml;
+
+            // Render wishlist in account
+            const wishlist = getFromStorage('wishlist', []);
+            const products = wishlist.map(id => getProductById(id)).filter(Boolean);
+            document.getElementById('accountWishlist').innerHTML = products.length > 0
+                ? `<div class="products-grid">${renderProductCards(products.slice(0, 4))}</div>`
+                : '<p style="color:var(--gray);">Your wishlist is empty.</p>';
+
+            updateCartBadge();
+            updateWishlistBadge();
+        });
+    </script>
+</body>
+</html>
